@@ -4,10 +4,10 @@ import android.text.format.Time;
 
 
 public class TaskItem {
-    public String taskName;
-    public String descriptionTask;
-    public Time timeTask;
-    public int revTask;
+    private String taskName;
+    private String descriptionTask;
+    private Time timeTask;
+    private int revTask;
 
     public TaskItem(){
         super();

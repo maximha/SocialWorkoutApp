@@ -9,10 +9,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
 public class Login extends ActionBarActivity implements View.OnClickListener {
+
+    EditText et_User , et_Password;
 
     private Button btnActLogin;
     private Button btnActHomeRegistration;
@@ -23,16 +26,25 @@ public class Login extends ActionBarActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_page);
 
-        btnActLogin = (Button) findViewById(R.id.btn_LogIn);
-        btnActLogin.setOnClickListener(this);
-
-        btnActHomeRegistration = (Button) findViewById(R.id.btn_homeRegistration);
-        btnActHomeRegistration.setOnClickListener(this);
+        registerViews();
 
         // Action Bar
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+
+    }
+
+    public void registerViews() {
+
+        et_User = (EditText) findViewById(R.id.editText_User);
+        et_Password = (EditText) findViewById(R.id.editText_Password);
+
+        btnActLogin = (Button) findViewById(R.id.btn_LogIn);
+        btnActLogin.setOnClickListener(this);
+
+        btnActHomeRegistration = (Button) findViewById(R.id.btn_homeRegistration);
+        btnActHomeRegistration.setOnClickListener(this);
 
     }
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class WorkoutItem {
 
-    public String workoutName;
-    public ArrayList<TaskItem> taskItems;
+    private String workoutName;
+    private ArrayList<TaskItem> taskItems;
 
     public WorkoutItem(){
         super();

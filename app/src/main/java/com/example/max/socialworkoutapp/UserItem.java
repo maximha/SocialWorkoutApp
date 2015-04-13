@@ -1,8 +1,9 @@
 package com.example.max.socialworkoutapp;
 
 public class UserItem {
-    public String userName;
-    public String password;
+    private String userName;
+    private String password;
+    private String rsaKey;
 
     public UserItem(){
         super();
@@ -28,5 +29,13 @@ public class UserItem {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRsaKey() {
+        return rsaKey;
+    }
+
+    public void setRsaKey(String rsaKey) {
+        this.rsaKey = rsaKey;
     }
 }

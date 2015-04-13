@@ -3,7 +3,7 @@ package com.example.max.socialworkoutapp;
 import java.util.ArrayList;
 
 public class WorkoutsList {
-    public ArrayList<WorkoutItem> workoutsList;
+    private ArrayList<WorkoutItem> workoutsList;
 
     public WorkoutsList(){
         super();
