@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_Plus_MW"
+        android:text=""
+        android:background="@drawable/ic_add"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_MyWorkouts"
+        android:background="@android:drawable/screen_background_dark_transparent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/btn_Plus_MW" />
+
+</RelativeLayout>

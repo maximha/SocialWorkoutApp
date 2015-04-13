@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_firstName"
+        android:id="@+id/label_FirstName"
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/label_LastName"
+        android:layout_marginTop="36dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:hint="@string/firstName"
+        android:id="@+id/editText_FirstName"
+        android:layout_marginTop="30dp"
+        android:layout_toEndOf="@+id/label_FirstName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_lastName"
+        android:id="@+id/label_LastName"
+        android:layout_marginTop="100dp"
+        android:textSize="20sp"
+        android:layout_marginStart="64dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:hint="@string/lastName"
+        android:id="@+id/editText_LastName"
+        android:layout_marginTop="94dp"
+        android:layout_toEndOf="@+id/label_LastName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_userName"
+        android:id="@+id/label_UserRegistr"
+        android:layout_below="@+id/label_LastName"
+        android:layout_alignEnd="@+id/label_LastName"
+        android:layout_marginTop="44dp"
+        android:textSize="20sp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:hint="@string/userName"
+        android:id="@+id/editText_UserRegistr"
+        android:layout_marginTop="164dp"
+        android:layout_toEndOf="@+id/label_UserRegistr" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_password"
+        android:id="@+id/label_PassRegistr"
+        android:layout_below="@+id/label_UserRegistr"
+        android:layout_alignEnd="@+id/label_UserRegistr"
+        android:layout_marginTop="44dp"
+        android:textSize="20sp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="@string/password"
+        android:ems="9"
+        android:id="@+id/editText_PassRegistr"
+        android:layout_marginTop="237dp"
+        android:layout_toEndOf="@+id/label_PassRegistr" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_confirmPassword"
+        android:id="@+id/label_ConfirmPass"
+        android:layout_below="@+id/label_PassRegistr"
+        android:layout_alignEnd="@+id/label_PassRegistr"
+        android:layout_marginTop="44dp"
+        android:textSize="20sp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:hint="@string/confirmPassword"
+        android:ems="9"
+        android:id="@+id/editText_ConfirmPass"
+        android:layout_marginTop="307dp"
+        android:layout_toEndOf="@+id/label_ConfirmPass" />
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/registration"
+        android:id="@+id/btn_Registration"
+        android:layout_below="@+id/label_ConfirmPass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="51dp"
+        android:textSize="15sp"
+        style="@style/btnStyleRed"/>
+
+</RelativeLayout>

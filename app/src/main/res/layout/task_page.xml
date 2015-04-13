@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_taskName"
+        android:id="@+id/label_TaskName"
+        android:textSize="25sp"
+        android:layout_alignBaseline="@+id/editText_TaskName"
+        android:layout_alignBottom="@+id/editText_TaskName"
+        android:layout_alignStart="@+id/btn_Save_Task" />
+
+    <EditText
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_TaskName"
+        android:text=""
+        android:hint="@string/taskName"
+        android:layout_marginTop="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/label_TaskName" />
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:text=""
+        android:hint="@string/description"
+        android:id="@+id/editText_Description"
+        android:layout_below="@+id/editText_TaskName"
+        android:layout_marginTop="36dp"
+        android:layout_alignEnd="@+id/editText_TaskName"
+        android:layout_alignStart="@+id/label_TaskName"
+        android:background="@color/FloralWhite"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_taskTime"
+        android:id="@+id/label_taskTime"
+        android:textSize="15sp"
+        android:layout_below="@+id/editText_Description"
+        android:layout_alignStart="@+id/editText_Description"
+        android:layout_marginTop="34dp" />
+
+    <EditText
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:hint="@string/taskTime"
+        android:ems="10"
+        android:id="@+id/editText_TaskTime"
+        android:textSize="15sp"
+        android:layout_marginTop="345dp"
+        android:layout_toEndOf="@+id/label_taskTime" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/tv_taskRev"
+        android:id="@+id/label_taskRev"
+        android:layout_below="@+id/label_taskTime"
+        android:textSize="15sp"
+        android:layout_alignStart="@+id/label_taskTime"
+        android:layout_marginTop="20dp" />
+
+    <EditText
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_TaskRev"
+        android:text=""
+        android:hint="@string/taskRev"
+        android:textSize="15sp"
+        android:layout_below="@+id/editText_TaskTime"
+        android:layout_alignStart="@+id/editText_TaskTime" />
+
+    <Button
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/save"
+        android:id="@+id/btn_Save_Task"
+        android:layout_below="@+id/editText_TaskRev"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="21dp"
+        android:textSize="15sp"
+        style="@style/btnStyleRed"/>
+
+</RelativeLayout>
