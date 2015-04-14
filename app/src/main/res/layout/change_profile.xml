@@ -47,7 +47,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tv_userName"
-        android:id="@+id/label_UserChangeProf"
+        android:id="@+id/label_User_ChangeProf"
         android:layout_below="@+id/label_LN_ChangeProf"
         android:layout_alignEnd="@+id/label_LN_ChangeProf"
         android:layout_marginTop="44dp"
@@ -58,17 +58,17 @@
         android:layout_height="wrap_content"
         android:text=""
         android:hint="@string/userName"
-        android:id="@+id/editText_UserChangeProf"
+        android:id="@+id/editText_User_ChangeProf"
         android:layout_marginTop="164dp"
-        android:layout_toEndOf="@+id/label_UserChangeProf" />
+        android:layout_toEndOf="@+id/label_User_ChangeProf" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tv_password"
         android:id="@+id/label_Pass_ChangeProf"
-        android:layout_below="@+id/label_UserChangeProf"
-        android:layout_alignEnd="@+id/label_UserChangeProf"
+        android:layout_below="@+id/label_User_ChangeProf"
+        android:layout_alignEnd="@+id/label_User_ChangeProf"
         android:layout_marginTop="44dp"
         android:textSize="20sp"/>
 

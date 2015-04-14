@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Login"
+            android:name=".Activity_Login"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,48 +20,53 @@
         </activity>
 
         <activity
-            android:name=".HomeMenu"
+            android:name=".Activity_HomeMenu"
             android:label="@string/action_Home">
         </activity>
 
         <activity
-            android:name=".Registration"
+            android:name=".Activity_Registration"
             android:label="Registration">
         </activity>
 
         <activity
-            android:name=".ChangeProfile"
+            android:name=".Activity_ChangeProfile"
             android:label="Change Profile">
          </activity>
 
         <activity
-            android:name=".MyWorkouts"
+            android:name=".Activity_MyWorkouts"
             android:label="My Workouts">
         </activity>
 
         <activity
-            android:name=".StorageWorkouts"
+            android:name=".Activity_StorageWorkouts"
             android:label="Storage">
         </activity>
 
         <activity
-            android:name=".AddToFavoritesWorkouts"
+            android:name=".Activity_AddToFavorites"
             android:label="Favorites">
         </activity>
 
         <activity
-            android:name=".Workout"
+            android:name=".Activity_Workout"
             android:label="Workout">
         </activity>
 
         <activity
-            android:name=".CreateNewWorkout"
+            android:name=".Activity_CreateNewWorkout"
             android:label="Create New Workout">
         </activity>
 
         <activity
-            android:name=".CreateNewTask"
+            android:name=".Activity_CreateNewTask"
             android:label="Create New Task">
+        </activity>
+
+        <activity
+            android:name=".Activity_Workout_Without_Action"
+            android:label="Workout">
         </activity>
 
     </application>

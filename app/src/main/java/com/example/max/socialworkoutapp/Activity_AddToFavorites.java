@@ -3,10 +3,8 @@ package com.example.max.socialworkoutapp;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,12 +12,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class AddToFavoritesWorkouts  extends ActionBarActivity implements View.OnClickListener {
+public class Activity_AddToFavorites extends ActionBarActivity implements View.OnClickListener {
 
     private ArrayList<String> strArr;
     private ListView listView_FavoritesWorkouts;
@@ -74,7 +70,7 @@ public class AddToFavoritesWorkouts  extends ActionBarActivity implements View.O
         final int deletePosition = position;
 
         AlertDialog.Builder alert = new AlertDialog.Builder(
-                AddToFavoritesWorkouts.this);
+                Activity_AddToFavorites.this);
 
         alert.setTitle("Delete");
         alert.setMessage("Do you want delete "+strArr.get(position)+" ?");

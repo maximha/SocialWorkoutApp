@@ -84,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tv_confirmPassword"
-        android:id="@+id/label_ConfirmPass"
+        android:id="@+id/label_ConfirmPassRegistr"
         android:layout_below="@+id/label_PassRegistr"
         android:layout_alignEnd="@+id/label_PassRegistr"
         android:layout_marginTop="44dp"
@@ -96,16 +96,16 @@
         android:inputType="textPassword"
         android:hint="@string/confirmPassword"
         android:ems="9"
-        android:id="@+id/editText_ConfirmPass"
+        android:id="@+id/editText_ConfirmPassRegistr"
         android:layout_marginTop="307dp"
-        android:layout_toEndOf="@+id/label_ConfirmPass" />
+        android:layout_toEndOf="@+id/label_ConfirmPassRegistr" />
 
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="@string/registration"
         android:id="@+id/btn_Registration"
-        android:layout_below="@+id/label_ConfirmPass"
+        android:layout_below="@+id/label_ConfirmPassRegistr"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="51dp"
         android:textSize="15sp"

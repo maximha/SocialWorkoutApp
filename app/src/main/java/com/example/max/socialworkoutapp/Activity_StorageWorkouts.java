@@ -18,9 +18,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class StorageWorkouts extends ActionBarActivity implements View.OnClickListener {
+public class Activity_StorageWorkouts extends ActionBarActivity implements View.OnClickListener {
 
-    //private Button btnActBack;
     private ArrayList<String> strArrStorage;
     private ListView listView_StorageWorkouts;
     private ArrayAdapter<String> adapter;
@@ -30,9 +29,6 @@ public class StorageWorkouts extends ActionBarActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.storage_workouts_page);
-
-        //btnActBack = (Button) findViewById(R.id.btn_Back_Storage);
-        //btnActBack.setOnClickListener(this);
 
         listView_StorageWorkouts = (ListView) findViewById(R.id.list_Storage);
         strArrStorage = new ArrayList<String>();
@@ -67,7 +63,7 @@ public class StorageWorkouts extends ActionBarActivity implements View.OnClickLi
                 //TextView clickedView = (TextView) view;
                 //Toast.makeText(MyWorkouts.this, "Item with id ["+id+"] - Position ["+position+"] - WORK ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
                 Intent intentItemPress_SW = null;
-                intentItemPress_SW = new Intent(StorageWorkouts.this, Workout.class);
+                intentItemPress_SW = new Intent(Activity_StorageWorkouts.this, Activity_Workout_Without_Action.class);
 
                 if(intentItemPress_SW != null)
                     startActivity(intentItemPress_SW);
@@ -104,52 +100,11 @@ public class StorageWorkouts extends ActionBarActivity implements View.OnClickLi
         {
             case R.id.add_to_favorites_menu:
                 return true;
-            case R.id.delete_menu:
-                removeItemFromList(info.position);
-                return true;
             default:
                 return false;
         }
     }
 
-    // method to remove list item
-    protected void removeItemFromList(int position) {
-        final int deletePosition = position;
-
-        AlertDialog.Builder alert = new AlertDialog.Builder(
-                StorageWorkouts.this);
-
-        alert.setTitle("Delete");
-        alert.setMessage("Do you want delete "+ strArrStorage.get(position)+" ?");
-        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // TOD O Auto-generated method stub
-
-                // main code on after clicking yes
-                strArrStorage.remove(deletePosition);
-                adapter.notifyDataSetChanged();
-                adapter.notifyDataSetInvalidated();
-
-            }
-        });
-        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
-                dialog.dismiss();
-            }
-        });
-
-        alert.show();
-
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("My Workouts");
-
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
-
-        registerForContextMenu(listView_StorageWorkouts);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -159,11 +114,11 @@ public class StorageWorkouts extends ActionBarActivity implements View.OnClickLi
         // int id = item.getItemId();
 
         if(item.getTitle() == "Favorites"){
-            Intent intentAddToFavorites = new Intent(this, AddToFavoritesWorkouts.class);
+            Intent intentAddToFavorites = new Intent(this, Activity_AddToFavorites.class);
             startActivity(intentAddToFavorites);
         }
         if (item.getTitle() == "Top 10"){
-            Toast.makeText(StorageWorkouts.this, "TOP 10", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Activity_StorageWorkouts.this, "TOP 10", Toast.LENGTH_SHORT).show();
             //Intent intentChangeProf = new Intent(this, ChangeProfile.class);
             //startActivity(intentChangeProf);
         }

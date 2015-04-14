@@ -6,8 +6,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
-public class CreateNewTask extends ActionBarActivity implements View.OnClickListener{
+public class Activity_CreateNewTask extends ActionBarActivity implements View.OnClickListener{
+
+    EditText et_TaskName , et_Description , et_Time , et_Rev;
+
     private Button btnAct_Task_Save;
     private static final String TAG = "State";
 
@@ -15,14 +19,22 @@ public class CreateNewTask extends ActionBarActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_page);
 
-        btnAct_Task_Save = (Button) findViewById(R.id.btn_Save_Task);
-        btnAct_Task_Save.setOnClickListener(this);
-
+        registerViews();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Create New Task");
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+    }
+
+    public void registerViews() {
+        et_TaskName = (EditText) findViewById(R.id.editText_TaskName);
+        et_Description= (EditText) findViewById(R.id.editText_Description);
+        et_Time = (EditText) findViewById(R.id.editText_TaskTime);
+        et_Rev= (EditText) findViewById(R.id.editText_TaskRev);
+
+        btnAct_Task_Save = (Button) findViewById(R.id.btn_Save_Task);
+        btnAct_Task_Save.setOnClickListener(this);
     }
 
     @Override

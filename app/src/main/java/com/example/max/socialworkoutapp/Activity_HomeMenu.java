@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-public class HomeMenu extends ActionBarActivity implements View.OnClickListener {
+public class Activity_HomeMenu extends ActionBarActivity implements View.OnClickListener {
 
     //private Button btnActChangeProf;
     private Button btnActCreateNewWorkout;
@@ -23,9 +23,15 @@ public class HomeMenu extends ActionBarActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_menu_page);
 
-        //btnActChangeProf = (Button) findViewById(R.id.btn_ChangeProf);
-        //btnActChangeProf.setOnClickListener(this);
+        registerViews();
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Home");
+
+        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+    }
+
+    public void registerViews() {
         btnActCreateNewWorkout = (Button) findViewById(R.id.btn_NewWorkout);
         btnActCreateNewWorkout.setOnClickListener(this);
 
@@ -34,11 +40,6 @@ public class HomeMenu extends ActionBarActivity implements View.OnClickListener 
 
         btnActStorageWorkouts = (Button) findViewById(R.id.btn_Storage);
         btnActStorageWorkouts.setOnClickListener(this);
-
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Home");
-
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
     }
 
     @Override
@@ -59,11 +60,11 @@ public class HomeMenu extends ActionBarActivity implements View.OnClickListener 
         // int id = item.getItemId();
 
         if(item.getTitle() == "Log Out"){
-            Intent intentLogOut = new Intent(this, Login.class);
+            Intent intentLogOut = new Intent(this, Activity_Login.class);
             startActivity(intentLogOut);
         }
         if (item.getTitle() == "Change Profile"){
-            Intent intentChangeProf = new Intent(this, ChangeProfile.class);
+            Intent intentChangeProf = new Intent(this, Activity_ChangeProfile.class);
             startActivity(intentChangeProf);
         }
 
@@ -76,19 +77,19 @@ public class HomeMenu extends ActionBarActivity implements View.OnClickListener 
             case R.id.btn_MyWorkouts:
                 Log.d(TAG, "MyWorkouts Button Pressed");
                 // MyWorkouts Button in Home menu page
-                Intent intentMyWorkouts = new Intent(this, MyWorkouts.class);
+                Intent intentMyWorkouts = new Intent(this, Activity_MyWorkouts.class);
                 startActivity(intentMyWorkouts);
                 break;
             case R.id.btn_Storage:
                 Log.d(TAG, "Storage Button Pressed");
                 // Storage Button in Home menu page
-                Intent intentStorageWorkouts = new Intent(this, StorageWorkouts.class);
+                Intent intentStorageWorkouts = new Intent(this, Activity_StorageWorkouts.class);
                 startActivity(intentStorageWorkouts);
                 break;
             case R.id.btn_NewWorkout:
                 Log.d(TAG, "NewWorkout Button Pressed");
                 // Create New Workout Button in Home menu page
-                Intent intentNewWorkout = new Intent(this, CreateNewWorkout.class);
+                Intent intentNewWorkout = new Intent(this, Activity_CreateNewWorkout.class);
                 startActivity(intentNewWorkout);
                 break;
             default:

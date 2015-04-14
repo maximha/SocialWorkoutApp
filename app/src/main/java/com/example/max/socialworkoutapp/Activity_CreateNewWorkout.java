@@ -7,8 +7,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
-public class CreateNewWorkout extends ActionBarActivity implements View.OnClickListener{
+public class Activity_CreateNewWorkout extends ActionBarActivity implements View.OnClickListener{
+
+    EditText et_CNW_WorkoutName ,et_CNW_TaskName , et_CNW_Description , et_CNW_Time , et_CNW_Rev;
+
     private Button btnAct_CNW_Save;
     private static final String TAG = "State";
 
@@ -16,14 +20,23 @@ public class CreateNewWorkout extends ActionBarActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_new_workout_page);
 
-        btnAct_CNW_Save = (Button) findViewById(R.id.btn_Save_CreateNewWorkout);
-        btnAct_CNW_Save.setOnClickListener(this);
-
+        registerViews();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Create New Workout");
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+    }
+
+    public void registerViews() {
+        et_CNW_WorkoutName = (EditText) findViewById(R.id.editText_CNW_WorkoutName);
+        et_CNW_TaskName = (EditText) findViewById(R.id.editText_CNW_TaskName);
+        et_CNW_Description= (EditText) findViewById(R.id.editText_CNW_Description);
+        et_CNW_Time = (EditText) findViewById(R.id.editText_CNW_TaskTime);
+        et_CNW_Rev= (EditText) findViewById(R.id.editText_CNW_TaskRev);
+
+        btnAct_CNW_Save = (Button) findViewById(R.id.btn_Save_CreateNewWorkout);
+        btnAct_CNW_Save.setOnClickListener(this);
     }
 
     @Override

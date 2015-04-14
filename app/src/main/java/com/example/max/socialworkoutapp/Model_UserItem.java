@@ -1,19 +1,9 @@
 package com.example.max.socialworkoutapp;
 
-public class UserItem {
+public class Model_UserItem {
     private String userName;
     private String password;
     private String rsaKey;
-
-    public UserItem(){
-        super();
-    }
-
-    public UserItem(String userName , String password){
-        super();
-        this.userName = userName;
-        this.password = password;
-    }
 
     public String getUserName() {
         return userName;

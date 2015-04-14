@@ -3,23 +3,11 @@ package com.example.max.socialworkoutapp;
 import android.text.format.Time;
 
 
-public class TaskItem {
+public class Model_TaskItem {
     private String taskName;
     private String descriptionTask;
     private Time timeTask;
     private int revTask;
-
-    public TaskItem(){
-        super();
-    }
-
-    public TaskItem(String taskName, String descriptionTask, Time timeTask, int revTask){
-        super();
-        this.taskName = taskName;
-        this.descriptionTask = descriptionTask;
-        this.timeTask = timeTask;
-        this.revTask = revTask;
-    }
 
     public String getTaskName() {
         return taskName;

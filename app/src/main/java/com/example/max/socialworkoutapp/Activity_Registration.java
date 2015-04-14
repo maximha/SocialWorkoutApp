@@ -8,11 +8,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
-/**
- * Created by Max on 14/03/2015.
- */
-public class Registration extends ActionBarActivity implements View.OnClickListener {
+public class Activity_Registration extends ActionBarActivity implements View.OnClickListener {
+
+    EditText et_FirstName , et_LastName , et_UserName , et_Pass , et_ConfirmPass;
 
     private Button btnActRegistration;
     private static final String TAG = "State";
@@ -22,13 +22,23 @@ public class Registration extends ActionBarActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration_page);
 
-        btnActRegistration = (Button) findViewById(R.id.btn_Registration);
-        btnActRegistration.setOnClickListener(this);
+        registerViews();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Registration");
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+    }
+
+    public void registerViews() {
+        et_FirstName = (EditText) findViewById(R.id.editText_FirstName);
+        et_LastName = (EditText) findViewById(R.id.editText_LastName);
+        et_UserName = (EditText) findViewById(R.id.editText_UserRegistr);
+        et_Pass = (EditText) findViewById(R.id.editText_PassRegistr);
+        et_ConfirmPass = (EditText) findViewById(R.id.editText_ConfirmPassRegistr);
+
+        btnActRegistration = (Button) findViewById(R.id.btn_Registration);
+        btnActRegistration.setOnClickListener(this);
     }
 
     @Override
@@ -44,7 +54,7 @@ public class Registration extends ActionBarActivity implements View.OnClickListe
             case R.id.btn_Registration:
                 Log.d(TAG, "Registration Button Pressed");
                 // Registration Button
-                Intent intentRegistration = new Intent(this, HomeMenu.class);
+                Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
                 startActivity(intentRegistration);
                 break;
             default:
