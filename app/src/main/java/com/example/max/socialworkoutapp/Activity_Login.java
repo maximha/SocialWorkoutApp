@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,10 +50,13 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         Log.d(TAG, "on the ID button to determine which causes the handler");
         switch (v.getId()){
             case R.id.btn_LogIn :
-                Log.d(TAG , "Login Button Pressed");
-                // Login Button
-                Intent intentLogIn = new Intent(this , Activity_HomeMenu.class);
-                startActivity(intentLogIn);
+                if(checkValidation ())//check if data entered is correct
+                {
+                    Log.d(TAG, "Login Button Pressed");
+                    // Login Button
+                    Intent intentLogIn = new Intent(this, Activity_HomeMenu.class);
+                    startActivity(intentLogIn);
+                }
                 break;
             case R.id.btn_homeRegistration :
                 Log.d(TAG , "Registration Button Pressed");
@@ -67,5 +68,14 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
                 break;
         }
 
+    }
+
+    //check validation
+    private boolean checkValidation() {
+        boolean ret = true;
+
+        if (!EditText_Validators.isName(et_User, true)) ret = false;
+        if (!EditText_Validators.isPassword(et_Password, true)) ret = false;
+        return ret;
     }
 }

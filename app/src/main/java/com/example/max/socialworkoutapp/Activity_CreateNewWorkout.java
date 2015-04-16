@@ -1,7 +1,6 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -43,13 +42,27 @@ public class Activity_CreateNewWorkout extends ActionBarActivity implements View
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_Save_CreateNewWorkout:
-                Log.d(TAG, "Save_CreateNewWorkout Button Pressed");
-                // Save Button in Create New Workout page
-                //Intent intentMyWorkouts = new Intent(this, MyWorkouts.class);
-                //startActivity(intentMyWorkouts);
+                if(checkValidation()) {
+                    Log.d(TAG, "Save_CreateNewWorkout Button Pressed");
+                    // Save Button in Create New Workout page
+                    //Intent intentMyWorkouts = new Intent(this, MyWorkouts.class);
+                    //startActivity(intentMyWorkouts);
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    //check validation
+    private boolean checkValidation() {
+        boolean ret = true;
+
+        if (!EditText_Validators.isName(et_CNW_WorkoutName, true)) ret = false;
+        if (!EditText_Validators.isName(et_CNW_TaskName, true)) ret = false;
+        if (!EditText_Validators.hasText(et_CNW_Description)) ret = false;
+        if (!EditText_Validators.hasText(et_CNW_Time)) ret = false;
+        if (!EditText_Validators.hasText(et_CNW_Rev)) ret = false;
+        return ret;
     }
 }
