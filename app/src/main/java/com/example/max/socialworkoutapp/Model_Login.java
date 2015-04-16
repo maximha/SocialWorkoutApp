@@ -1,6 +1,6 @@
 package com.example.max.socialworkoutapp;
 
-public class Model_UserItem {
+public class Model_Login {
     private String userName;
     private String password;
     private String rsaKey;

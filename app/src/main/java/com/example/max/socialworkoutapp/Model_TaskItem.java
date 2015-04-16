@@ -1,13 +1,13 @@
 package com.example.max.socialworkoutapp;
 
-import android.text.format.Time;
 
 
 public class Model_TaskItem {
+
     private String taskName;
     private String descriptionTask;
-    private Time timeTask;
-    private int revTask;
+    private String timeTask;
+    private String revTask;
 
     public String getTaskName() {
         return taskName;
@@ -25,19 +25,20 @@ public class Model_TaskItem {
         this.descriptionTask = descriptionTask;
     }
 
-    public Time getTimeTask() {
+    public String getTimeTask() {
         return timeTask;
     }
 
-    public void setTimeTask(Time timeTask) {
+    public void setTimeTask(String timeTask) {
         this.timeTask = timeTask;
     }
 
-    public int getRevTask() {
+    public String getRevTask() {
         return revTask;
     }
 
-    public void setRevTask(int revTask) {
+    public void setRevTask(String revTask) {
         this.revTask = revTask;
     }
+
 }
