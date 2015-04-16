@@ -41,13 +41,26 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_Save_Task:
-                Log.d(TAG, "Save_Task Pressed");
-                // Save Button in Create New Task page
-                //Intent intentMyWorkouts = new Intent(this, MyWorkouts.class);
-                //startActivity(intentMyWorkouts);
+                if(checkValidation()) {
+                    Log.d(TAG, "Save_Task Pressed");
+                    // Save Button in Create New Task page
+                    //Intent intentMyWorkouts = new Intent(this, MyWorkouts.class);
+                    //startActivity(intentMyWorkouts);
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    //check validation
+    private boolean checkValidation() {
+        boolean ret = true;
+
+        if (!EditText_Validators.isName(et_TaskName, true)) ret = false;
+        if (!EditText_Validators.hasText(et_Description)) ret = false;
+        if (!EditText_Validators.hasText(et_Time)) ret = false;
+        if (!EditText_Validators.hasText(et_Rev)) ret = false;
+        return ret;
     }
 }

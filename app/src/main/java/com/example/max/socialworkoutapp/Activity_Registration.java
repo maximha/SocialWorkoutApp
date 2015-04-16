@@ -52,13 +52,28 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_Registration:
-                Log.d(TAG, "Registration Button Pressed");
-                // Registration Button
-                Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
-                startActivity(intentRegistration);
+                if(checkValidation()) {
+                    Log.d(TAG, "Registration Button Pressed");
+                    // Registration Button
+                    Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
+                    startActivity(intentRegistration);
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    //check validation
+    private boolean checkValidation() {
+        boolean ret = true;
+
+        if (!EditText_Validators.isName(et_FirstName, true)) ret = false;
+        if (!EditText_Validators.isName(et_LastName, true)) ret = false;
+        if (!EditText_Validators.isName(et_UserName, true)) ret = false;
+        if (!EditText_Validators.isPassword(et_Pass, true)) ret = false;
+        if (!EditText_Validators.isPassword(et_ConfirmPass, true)) ret = false;
+        if (!EditText_Validators.isConfirm(et_Pass, et_ConfirmPass)) ret = false;
+        return ret;
     }
 }
