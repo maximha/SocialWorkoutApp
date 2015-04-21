@@ -21,14 +21,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class Activity_Workout extends ActionBarActivity implements View.OnClickListener {
+public class Activity_Workout extends ActionBarActivity  {
 
-    private TextView tv_WorkoutName;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> strArr_Tasks;
 
-    public ProgressDialog pDialog;
-    private Button btnActPlus_W;
     private ListView listView_Tasks;
     //ArrayList<WorkoutItem> workoutList;
     //WorkoutItemAdapter adapter;
@@ -67,11 +64,7 @@ public class Activity_Workout extends ActionBarActivity implements View.OnClickL
     }
 
     public void registerViews() {
-        tv_WorkoutName = (TextView)findViewById(R.id.textView_WorkoutName);
         listView_Tasks = (ListView) findViewById(R.id.list_Tasks);
-
-        btnActPlus_W = (Button) findViewById(R.id.btn_Plus_W);
-        btnActPlus_W.setOnClickListener(this);
     }
 
     @Override
@@ -138,27 +131,25 @@ public class Activity_Workout extends ActionBarActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_Plus_W:
-                Log.d(TAG, "Plus Button Pressed");
-                // Plus Button in Workout page
-                Intent intentPlus_W = new Intent(this, Activity_CreateNewTask.class);
-                startActivity(intentPlus_W);
-                //strArr_Tasks.add("Task : " + 25);
-                //adapter = new ArrayAdapter<String>(getApplicationContext()
-                //        , android.R.layout.simple_list_item_1 , strArr_Tasks);
-                //listView_Tasks.setAdapter(adapter);
-                break;
-            default:
-                break;
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_add_workout, menu);
+        return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    /*Override
-    public void onListItemClick(ListView parent , View v , int position , long id){
-        //Toast.makeText(this , "You have select" + parent. , Toast.LENGTH_SHORT);
+        if(id == R.id.btn_add_workout){
+            Intent intentPlus_W = new Intent(this, Activity_CreateNewTask.class);
+            startActivity(intentPlus_W);
+        }
 
-    }*/
+        return super.onOptionsItemSelected(item);
+    }
 
 }

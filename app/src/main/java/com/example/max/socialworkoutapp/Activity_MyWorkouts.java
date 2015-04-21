@@ -3,12 +3,14 @@ package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,17 +18,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class Activity_MyWorkouts extends ActionBarActivity implements View.OnClickListener {
+public class Activity_MyWorkouts extends ActionBarActivity{
 
-    private Button btnActPlus;
     private ArrayList<String> strArr;
     private ListView listView_MyWorkouts;
     private ArrayAdapter<String> adapter;
     private static final String TAG = "State";
+    final Context context = this;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,10 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
             strArr.add("WORKOUT : " + i);
         }
 
+        defineArrayAdapter();
+    }
+
+    private void defineArrayAdapter(){
         adapter = new ArrayAdapter<String>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArr);
         listView_MyWorkouts.setAdapter(adapter);
@@ -64,9 +71,6 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
 
     public void registerViews() {
         listView_MyWorkouts = (ListView) findViewById(R.id.list_MyWorkouts);
-
-        btnActPlus = (Button) findViewById(R.id.btn_Plus_MW);
-        btnActPlus.setOnClickListener(this);
     }
 
     @Override
@@ -88,7 +92,9 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
             case R.id.context_menu_upload:
                 return true;
             case R.id.context_menu_delete:
-                removeItemFromList(info.position);
+                //removeItemFromList(info.position);
+                strArr.remove(info.position);
+                adapter.notifyDataSetChanged();
                 return true;
             default:
                 return false;
@@ -96,7 +102,7 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
     }
 
     // method to remove item fom list
-    protected void removeItemFromList(int position) {
+    /*protected void removeItemFromList(int position) {
         final int deletePosition = position;
 
         AlertDialog.Builder alert = new AlertDialog.Builder(
@@ -132,7 +138,7 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
 
         registerForContextMenu(listView_MyWorkouts);
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,46 +152,39 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        // int id = item.getItemId();
+        int id = item.getItemId();
 
-        /*if(item.getTitle() == "Add"){
+        if(id == R.id.btn_add_workout){
             Log.d(TAG, "Plus Button Pressed");
-            // Plus Button in My Workouts page
-            Intent intentPlus_MW = new Intent(this, Activity_CreateNewWorkout.class);
-            startActivity(intentPlus_MW);
-        }*/
+            createDialog();
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void createDialog()
+    {
+        LayoutInflater li = LayoutInflater.from(context);
+        View dialog_add_workout_name = li.inflate(R.layout.dialog_add_workout_name, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Add workout name");
+        alertDialogBuilder.setView(dialog_add_workout_name);
+        final EditText userInput = (EditText)dialog_add_workout_name.findViewById(R.id.et_dialog_add_workout_name);
+        alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int id){
+                String inputResult = (userInput.getText().toString());
+                strArr.add(inputResult);
+                defineArrayAdapter();
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            /*case R.id.btn_Back_MW:
-                Log.d(TAG, "Back Button Pressed");
-                // Back Button in My Workouts page
-                Intent intentBack_MW = new Intent(this, HomeMenu.class);
-                startActivity(intentBack_MW);
-                break;*/
-            case R.id.btn_Plus_MW:
-                Log.d(TAG, "Plus Button Pressed");
-                // Plus Button in My Workouts page
-                Intent intentPlus_MW = new Intent(this, Activity_CreateNewWorkout.class);
-                startActivity(intentPlus_MW);
-                break;
-            default:
-                break;
-        }
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int id){
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
-    /*public void onListItemClick(ListView parent , View v , int position , long id){
-        //Toast.makeText(this , "You have select" + parent. , Toast.LENGTH_SHORT);
-
-        // Check what workout was pressed and go to page of Workout
-        //if(v.getId() == parent.getCheckedItemPosition()){
-            Intent intentItemPress_MW = new Intent(this, Workout.class);
-            startActivity(intentItemPress_MW);
-        //}
-    }*/
 
 }

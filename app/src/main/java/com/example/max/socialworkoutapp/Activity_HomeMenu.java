@@ -13,7 +13,6 @@ import android.widget.Button;
 public class Activity_HomeMenu extends ActionBarActivity implements View.OnClickListener {
 
     //private Button btnActChangeProf;
-    private Button btnActCreateNewWorkout;
     private Button btnActMyWorkouts;
     private Button btnActStorageWorkouts;
     private static final String TAG = "State";
@@ -32,8 +31,6 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
     }
 
     public void registerViews() {
-        btnActCreateNewWorkout = (Button) findViewById(R.id.btn_NewWorkout);
-        btnActCreateNewWorkout.setOnClickListener(this);
 
         btnActMyWorkouts = (Button) findViewById(R.id.btn_MyWorkouts);
         btnActMyWorkouts.setOnClickListener(this);
@@ -85,12 +82,6 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
                 // Storage Button in Home menu page
                 Intent intentStorageWorkouts = new Intent(this, Activity_StorageWorkouts.class);
                 startActivity(intentStorageWorkouts);
-                break;
-            case R.id.btn_NewWorkout:
-                Log.d(TAG, "NewWorkout Button Pressed");
-                // Create New Workout Button in Home menu page
-                Intent intentNewWorkout = new Intent(this, Activity_CreateNewWorkout.class);
-                startActivity(intentNewWorkout);
                 break;
             default:
                 break;
