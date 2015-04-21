@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,10 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
                     startActivity(intentItemPress_MW);
             }
         });
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        //actionBar.setTitle("Home");
+
+        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
     }
 
     public void registerViews() {
@@ -130,6 +135,30 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
 
         registerForContextMenu(listView_MyWorkouts);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_add_workout, menu);
+
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        // int id = item.getItemId();
+
+        /*if(item.getTitle() == "Add"){
+            Log.d(TAG, "Plus Button Pressed");
+            // Plus Button in My Workouts page
+            Intent intentPlus_MW = new Intent(this, Activity_CreateNewWorkout.class);
+            startActivity(intentPlus_MW);
+        }*/
+
+        return super.onOptionsItemSelected(item);
     }
 
 
