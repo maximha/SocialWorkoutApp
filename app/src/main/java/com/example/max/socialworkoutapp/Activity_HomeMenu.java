@@ -83,12 +83,6 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
                 Intent intentStorageWorkouts = new Intent(this, Activity_StorageWorkouts.class);
                 startActivity(intentStorageWorkouts);
                 break;
-            case R.id.btn_NewWorkout:
-                Log.d(TAG, "NewWorkout Button Pressed");
-                // Create New Workout Button in Home menu page
-                Intent intentNewWorkout = new Intent(this, Activity_CreateNewWorkout.class);
-                startActivity(intentNewWorkout);
-                break;
             default:
                 break;
         }
