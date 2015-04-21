@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class Activity_Workout_Without_Action extends ActionBarActivity {
 
-    private TextView tv_WorkoutName;
     private ArrayAdapter<String> adapter;
     private ArrayList<String> strArr_Tasks;
     private ListView listView_Tasks;
@@ -51,7 +50,6 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
     }
 
     public void registerViews() {
-        tv_WorkoutName = (TextView)findViewById(R.id.textView_WWA_WorkoutName);
         listView_Tasks = (ListView) findViewById(R.id.list_WWA_Tasks);
     }
 

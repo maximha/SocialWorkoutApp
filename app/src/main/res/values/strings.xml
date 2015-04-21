@@ -35,4 +35,5 @@
     <string name="workoutName">Workout Name</string>
     <string name="delete">Delete</string>
     <string name="addWorkout">add</string>
+    <string name="hint_dialo_add_workout_name">Enter workout name</string>
 </resources>

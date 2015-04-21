@@ -16,19 +16,10 @@
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="@string/createNewWorkout"
-        android:id="@+id/btn_NewWorkout"
-        style="@style/btnStyleGenoa"
-        android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/btn_MyWorkouts" />
-
-    <Button
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
         android:text="@string/my_Workouts"
         android:id="@+id/btn_MyWorkouts"
         android:layout_marginTop="30dp"
-        android:layout_below="@+id/btn_NewWorkout"
+        android:layout_below="@+id/image_Prof"
         android:layout_centerHorizontal="true"
         style="@style/btnStyleGenoa"/>
 

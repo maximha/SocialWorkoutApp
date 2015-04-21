@@ -5,31 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_Plus_W"
-        android:background="@drawable/ic_add"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/workoutName"
-        android:id="@+id/textView_WorkoutName"
-        android:layout_marginTop="17dp"
-        android:layout_centerHorizontal="true" />
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/list_Tasks"
         android:layout_alignParentStart="true"
         android:background="@android:color/darker_gray"
-        android:layout_below="@+id/btn_Plus_W"
         tools:listitem="@layout/task_row"
         android:textFilterEnabled="false" />
 
