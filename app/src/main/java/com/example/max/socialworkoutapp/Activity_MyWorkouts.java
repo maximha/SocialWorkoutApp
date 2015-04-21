@@ -1,5 +1,6 @@
 package com.example.max.socialworkoutapp;
 
+
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -27,10 +28,10 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
     private ArrayAdapter<String> adapter;
     private static final String TAG = "State";
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_workouts_page);
+
 
         registerViews();
 
@@ -59,10 +60,6 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
                     startActivity(intentItemPress_MW);
             }
         });
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        //actionBar.setTitle("Home");
-
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
     }
 
     public void registerViews() {
@@ -129,7 +126,7 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
 
         alert.show();
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
         actionBar.setTitle("My Workouts");
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
@@ -140,8 +137,8 @@ public class Activity_MyWorkouts extends ActionBarActivity implements View.OnCli
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_workout, menu);
-
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_add_workout, menu);
         return true;
     }
     @Override

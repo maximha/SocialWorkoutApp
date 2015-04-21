@@ -34,4 +34,5 @@
     <string name="tv_workoutName">Workout Name :</string>
     <string name="workoutName">Workout Name</string>
     <string name="delete">Delete</string>
+    <string name="addWorkout">add</string>
 </resources>
