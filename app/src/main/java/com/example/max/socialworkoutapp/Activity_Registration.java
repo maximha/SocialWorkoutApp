@@ -9,6 +9,12 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.concurrent.ExecutionException;
 
 public class Activity_Registration extends ActionBarActivity implements View.OnClickListener {
 
@@ -16,6 +22,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
 
     private Button btnActRegistration;
     private static final String TAG = "State";
+    private PostHelper SHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +60,49 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         switch (v.getId()) {
             case R.id.btn_Registration:
                 if(checkValidation()) {
-                    Log.d(TAG, "Registration Button Pressed");
-                    // Registration Button
-                    Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
-                    startActivity(intentRegistration);
+                    SHelper = new PostHelper();
+                    SHelper.execute("http://localhost:1821/api/registration","Registration", et_FirstName.getText().toString(), et_LastName.getText().toString(),et_UserName.getText().toString(), et_Pass.getText().toString());
+                    try {
+                        checkPostResult(showResult());
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(this, "Form contains error", Toast.LENGTH_LONG)
+                            .show();
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    // check if user allow to register
+    public void checkPostResult(String result) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
+            startActivity(intentRegistration);
+        } else {
+            Toast.makeText(this, "This user already exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
+    // get response from http request
+    private String showResult() {
+        if (SHelper == null)
+            return null;
+        try {
+            return SHelper.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //check validation
