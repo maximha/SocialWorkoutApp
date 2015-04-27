@@ -47,6 +47,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 6;
         if(urls[1].equals("ListOfTaskName"))
             status = 7;
+        if(urls[1].equals("Task"))
+            status = 8;
 
         switch(status){
             case 1:
@@ -69,6 +71,9 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 return POST(urls[0],urls[1]);
             case 7:
                 setWorkoutName(urls[2]);
+                return POST(urls[0],urls[1]);
+            case 8:
+                setTaskName(urls[2]);
                 return POST(urls[0],urls[1]);
             default:
                 return null;
@@ -113,6 +118,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 6;
             if(cs.equals("ListOfTaskName"))
                 status = 7;
+            if(cs.equals("Task"))
+                status = 8;
 
             switch(status){
                 case 1:
@@ -134,6 +141,9 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                     break;
                 case 7:
                     setJsonWorkout();
+                    break;
+                case 8:
+                    setJsonTask();
                     break;
                 default:
                     break;
@@ -231,6 +241,16 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         workout = new Model_WorkoutItem();
         workout.setUserName("");
         workout.setWorkoutName(urls);
+    }
+
+    private void setTaskName(String urls)
+    {
+        task = new Model_TaskItem();
+        task.setWorkoutName("");
+        task.setTaskName(urls);
+        task.setDescriptionTask("");
+        task.setTimeTask("");
+        task.setRevTask("");
     }
 
     private void setJsonLogIn() throws JSONException

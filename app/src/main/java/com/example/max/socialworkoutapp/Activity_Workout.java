@@ -43,12 +43,12 @@ public class Activity_Workout extends ActionBarActivity  {
 
         registerViews();
 
-        ShowWorkoutsList();
+        ShowTasksList();
 
         defineArrayAdapter();
     }
 
-    private  void  ShowWorkoutsList(){
+    private  void  ShowTasksList(){
         SHelper = new PostHelper();
         SHelper.execute("http://localhost:1821/api/ListOfTaskName","ListOfTaskName",sharedGet());
         try {
@@ -81,9 +81,11 @@ public class Activity_Workout extends ActionBarActivity  {
         listView_Tasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
-                // We know the View is a TextView so we can cast it
-                //TextView clickedView = (TextView) view;
-                //Toast.makeText(MyWorkouts.this, "Item with id ["+id+"] - Position ["+position+"] - WORK ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
+
+                String data=(String)parentAdapter.getItemAtPosition(position);
+
+                sharedPut(data);
+
                 Intent intentItemPress_MW = null;
                 intentItemPress_MW = new Intent(Activity_Workout.this, Activity_Task.class);
 
@@ -177,6 +179,13 @@ public class Activity_Workout extends ActionBarActivity  {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sharedPut(String taskName)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
+        editor.putString("taskName", taskName);
+        editor.commit();
     }
 
     private String sharedGet()

@@ -3,6 +3,7 @@ package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -10,6 +11,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class Activity_Task extends ActionBarActivity {
 
@@ -19,13 +28,29 @@ public class Activity_Task extends ActionBarActivity {
     private TextView tv_taskname ,tv_time , tv_rev;
     private TextView row_taskName , row_description , row_taskTime ,row_taskRew;
 
+    private PostHelper SHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.task_page);
 
+
         registerViews();
+        ShowTask();
         defineArrayAdapter();
+    }
+
+    private  void  ShowTask(){
+        SHelper = new PostHelper();
+        SHelper.execute("http://localhost:1821/api/TaskByName","Task",sharedGet());
+        try {
+            checkPostResultTask(showResult());
+
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void registerViews() {
@@ -47,7 +72,7 @@ public class Activity_Task extends ActionBarActivity {
     private void defineArrayAdapter(){
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("task");
+        actionBar.setTitle("Task");
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
     }
@@ -72,5 +97,60 @@ public class Activity_Task extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private String sharedGet()
+    {
+        SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
+        return  editor.getString("taskName", null);
+    }
+
+    // get response from http request
+    private String showResult() {
+        if (SHelper == null)
+            return null;
+        try {
+            return SHelper.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void checkPostResultTask(String result) throws JSONException{
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            String[] jsonArr = null;
+            jsonArr = getJsonArray(json);
+            /*strArr_Tasks = new ArrayList<String>();
+            for (int i = 0 ; i < jsonArr.length ; i++){
+
+                strArr_Tasks.add(jsonArr[i]);
+            }*/
+            row_taskName.setText(jsonArr[0]);
+            row_description.setText(jsonArr[1]);
+            row_taskTime.setText(jsonArr[2]);
+            row_taskRew.setText(jsonArr[3]);
+
+        } else {
+            Toast.makeText(this, "This task already exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+    private String[] getJsonArray(JSONObject json){
+        String[] modelTaskElements = null;
+        try {
+            JSONArray tasks = json.getJSONArray("itemTask");
+            modelTaskElements = new String[tasks.length()];
+            for (int i = 0; i< tasks.length() ; i++ ){
+                modelTaskElements[i] = tasks.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return modelTaskElements;
     }
 }
