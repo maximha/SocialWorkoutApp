@@ -35,6 +35,11 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
             strArr_Tasks.add(i,"TASK : " + i);
         }
 
+        defineArrayAdapter();
+    }
+
+    private void defineArrayAdapter(){
+
         adapter = new ArrayAdapter<String>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArr_Tasks);
         listView_Tasks.setAdapter(adapter);
@@ -47,6 +52,7 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
         //new GetWorkout().execute("");// Http or JSON path
 
         registerForContextMenu(listView_Tasks);
+
     }
 
     public void registerViews() {

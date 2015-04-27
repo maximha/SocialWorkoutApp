@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -23,6 +24,10 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     private Model_TaskItem task;
     private Model_WorkoutItem workout;
     private JSONObject jsonObject;
+    private String _userName;
+    private String _workoutName;
+
+
 
     @Override
     protected String doInBackground(String... urls) {
@@ -36,8 +41,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 3;
         if(urls[1].equals("Workout"))
             status = 4;
-        if(urls[1].equals("Task"))
+        if(urls[1].equals("AddTask"))
             status = 5;
+        if(urls[1].equals("ListOfWorkoutsName"))
+            status = 6;
+        if(urls[1].equals("ListOfTaskName"))
+            status = 7;
 
         switch(status){
             case 1:
@@ -49,11 +58,17 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             case 3:
                 setModelRegistration(urls[2], urls[3], urls[4], urls[5]);
                 return POST(urls[0],urls[1]);
-            case 5:
-                setModelWorkout(urls[2]);
-                return POST(urls[0],urls[1]);
             case 4:
-                setModelTask(urls[2], urls[3], urls[4], urls[5]);
+                setModelWorkout(urls[2], urls[3]);
+                return POST(urls[0],urls[1]);
+            case 5:
+                setModelTask(urls[2], urls[3], urls[4], urls[5],urls[6]);
+                return POST(urls[0],urls[1]);
+            case 6:
+                setUserName(urls[2]);
+                return POST(urls[0],urls[1]);
+            case 7:
+                setWorkoutName(urls[2]);
                 return POST(urls[0],urls[1]);
             default:
                 return null;
@@ -65,6 +80,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         //checkPostResult(result);//check result answer
     }
+
 
     public String POST(String url, String cs){
         InputStream inputStream ;
@@ -91,8 +107,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 3;
             if(cs.equals("Workout"))
                 status = 4;
-            if(cs.equals("Task"))
+            if(cs.equals("AddTask"))
                 status = 5;
+            if(cs.equals("ListOfWorkoutsName"))
+                status = 6;
+            if(cs.equals("ListOfTaskName"))
+                status = 7;
 
             switch(status){
                 case 1:
@@ -104,11 +124,16 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 case 3:
                     setJsonRegistration();
                     break;
-                case 5:
+                case 4:
                     setJsonWorkout();
                     break;
-                case 4:
+                case 5:
                     setJsonTask();
+                case 6:
+                    setJsonLogIn();
+                    break;
+                case 7:
+                    setJsonWorkout();
                     break;
                 default:
                     break;
@@ -176,19 +201,36 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         registration.setPassword(urls4);
     }
 
-    private void setModelWorkout(String urls1)
+    private void setModelWorkout(String urls1 , String urls2)
     {
         workout = new Model_WorkoutItem();
-        workout.setWorkoutName(urls1);
+        workout.setUserName(urls1);
+        workout.setWorkoutName(urls2);
     }
 
-    private void setModelTask(String urls1, String urls2, String urls3, String urls4)
+    private void setModelTask(String urls1, String urls2, String urls3, String urls4 ,String urls5)
     {
         task = new Model_TaskItem();
-        task.setTaskName(urls1);
-        task.setDescriptionTask(urls2);
-        task.setTimeTask(urls3);
-        task.setRevTask(urls4);
+        task.setWorkoutName(urls1);
+        task.setTaskName(urls2);
+        task.setDescriptionTask(urls3);
+        task.setTimeTask(urls4);
+        task.setRevTask(urls5);
+    }
+
+    private void setUserName(String urls)
+    {
+        logIn = new Model_Login();
+        logIn.setUserName(urls);
+        logIn.setPassword("");
+        logIn.setRsaKey("");
+    }
+
+    private void setWorkoutName(String urls)
+    {
+        workout = new Model_WorkoutItem();
+        workout.setUserName("");
+        workout.setWorkoutName(urls);
     }
 
     private void setJsonLogIn() throws JSONException
@@ -208,11 +250,13 @@ public class PostHelper extends AsyncTask<String, Void, String> {
 
     private void setJsonWorkout() throws JSONException
     {
+        jsonObject.accumulate("userName", workout.getUserName());
         jsonObject.accumulate("workoutName", workout.getWorkoutName());
     }
 
     private void setJsonTask() throws JSONException
     {
+        jsonObject.accumulate("workoutName", task.getWorkoutName());
         jsonObject.accumulate("taskName", task.getTaskName());
         jsonObject.accumulate("description", task.getDescriptionTask());
         jsonObject.accumulate("time", task.getTimeTask());

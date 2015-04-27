@@ -77,7 +77,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
             Intent intentSaveChangeProf = new Intent(this, Activity_HomeMenu.class);
             startActivity(intentSaveChangeProf);
         } else {
-            Toast.makeText(this, "This user already exist !!!",
+            Toast.makeText(this, "Change Profile failure !!!",
                     Toast.LENGTH_LONG).show();
             return;
         }
