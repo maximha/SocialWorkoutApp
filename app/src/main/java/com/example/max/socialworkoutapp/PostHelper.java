@@ -24,8 +24,6 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     private Model_TaskItem task;
     private Model_WorkoutItem workout;
     private JSONObject jsonObject;
-    private String _userName;
-    private String _workoutName;
 
 
 
@@ -136,6 +134,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                     break;
                 case 5:
                     setJsonTask();
+                    break;
                 case 6:
                     setJsonLogIn();
                     break;

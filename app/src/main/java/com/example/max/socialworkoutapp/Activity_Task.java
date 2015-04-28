@@ -43,7 +43,7 @@ public class Activity_Task extends ActionBarActivity {
 
     private  void  ShowTask(){
         SHelper = new PostHelper();
-        SHelper.execute("http://localhost:1821/api/TaskByName","Task",sharedGet());
+        SHelper.execute("http://localhost:36301/api/TaskByName","Task",sharedGet());
         try {
             checkPostResultTask(showResult());
 

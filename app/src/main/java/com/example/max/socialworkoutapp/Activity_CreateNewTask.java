@@ -29,10 +29,9 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
 
         registerViews();
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Create New Task");
+        defineAdapter();
 
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+
     }
 
     public void registerViews() {
@@ -45,13 +44,20 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
         btnAct_Task_Save.setOnClickListener(this);
     }
 
+    private void defineAdapter(){
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Create New Task");
+
+        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_Save_Task:
                 if(checkValidation()) {
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:1821/api/addtask","AddTask", sharedGet(), et_TaskName.getText().toString(),
+                    SHelper.execute("http://localhost:36301/api/AddTask","AddTask", sharedGet(), et_TaskName.getText().toString(),
                                             et_Description.getText().toString(),et_Time.getText().toString(), et_Rev.getText().toString());
                     try {
                         checkPostResult(showResult());

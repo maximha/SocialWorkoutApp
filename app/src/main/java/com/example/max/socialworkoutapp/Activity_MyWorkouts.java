@@ -59,7 +59,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
     private  void  ShowWorkoutsList(){
         SHelper = new PostHelper();
-        SHelper.execute("http://localhost:1821/api/ListOfWorkoutsName","ListOfWorkoutsName",sharedGet());
+        SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName",sharedGet());
         try {
             checkPostResultWorkoutList(showResult());
             ///checkPostResult(showResult());
@@ -197,7 +197,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                 String inputResult = (workoutNameInput.getText().toString());
                 if(true) {
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:1821/api/addworkout","Workout", sharedGet(), inputResult);
+                    SHelper.execute("http://localhost:36301/api/addworkout","Workout", sharedGet(), inputResult);
                     try {
                         strArr.add(inputResult);
                         checkPostResult(showResult());

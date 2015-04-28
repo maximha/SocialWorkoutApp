@@ -60,7 +60,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
             case R.id.btn_Registration:
                 if(checkValidation()) {
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:1821/api/registration","Registration", et_FirstName.getText().toString(), et_LastName.getText().toString(),et_UserName.getText().toString(), et_Pass.getText().toString());
+                    SHelper.execute("http://localhost:36301/api/registration","Registration", et_FirstName.getText().toString(), et_LastName.getText().toString(),et_UserName.getText().toString(), et_Pass.getText().toString());
                     try {
                         checkPostResult(showResult());
                     } catch (JSONException e) {
