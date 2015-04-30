@@ -83,6 +83,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         if(json.getBoolean("result")){
             Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
             startActivity(intentRegistration);
+            finish();
         } else {
             Toast.makeText(this, "This user already exist !!!",
                     Toast.LENGTH_LONG).show();
