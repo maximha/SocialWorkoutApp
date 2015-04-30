@@ -122,17 +122,23 @@ public class Activity_Task extends ActionBarActivity {
     private void checkPostResultTask(String result) throws JSONException{
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            String[] jsonArr = null;
-            jsonArr = getJsonArray(json);
+           // String[] jsonArr = null;
+            //jsonArr = getJsonArray(json);
+            Model_TaskItem model = new Model_TaskItem();
+            model = getJsonArray(json);
             /*strArr_Tasks = new ArrayList<String>();
             for (int i = 0 ; i < jsonArr.length ; i++){
 
                 strArr_Tasks.add(jsonArr[i]);
             }*/
-            row_taskName.setText(jsonArr[0]);
+            /*row_taskName.setText(jsonArr[0]);
             row_description.setText(jsonArr[1]);
             row_taskTime.setText(jsonArr[2]);
-            row_taskRew.setText(jsonArr[3]);
+            row_taskRew.setText(jsonArr[3]);*/
+            row_taskName.setText(model.getTaskName());
+            row_description.setText(model.getDescriptionTask());
+            row_taskTime.setText(model.getTimeTask());
+            row_taskRew.setText(model.getRevTask());
 
         } else {
             Toast.makeText(this, "This task already exist !!!",
@@ -140,17 +146,30 @@ public class Activity_Task extends ActionBarActivity {
             return;
         }
     }
-    private String[] getJsonArray(JSONObject json){
-        String[] modelTaskElements = null;
+    private Model_TaskItem getJsonArray(JSONObject json){
+       // String[] modelTaskElements = null;
+        Model_TaskItem model = new Model_TaskItem();
         try {
-            JSONArray tasks = json.getJSONArray("itemTask");
+            JSONObject c = json.getJSONObject("itemTask");
+            String tName = c.getString("taskName");
+            String wName = c.getString("workoutName");
+            String desc = c.getString("description");
+            String time = c.getString("time");
+            String rev = c.getString("rev");
+
+            model.setTaskName(tName);
+            model.setWorkoutName(wName);
+            model.setDescriptionTask(desc);
+            model.setTimeTask(time);
+            model.setRevTask(rev);
+           /* JSONArray tasks = json.getJSONArray("itemTask");
             modelTaskElements = new String[tasks.length()];
             for (int i = 0; i< tasks.length() ; i++ ){
                 modelTaskElements[i] = tasks.getString(i);
-            }
+            }*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return modelTaskElements;
+        return model;
     }
 }
