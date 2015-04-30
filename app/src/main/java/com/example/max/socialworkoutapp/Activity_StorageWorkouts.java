@@ -2,6 +2,7 @@ package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
     private ListView listView_StorageWorkouts;
     private ArrayAdapter<String> adapter;
     private static final String TAG = "State";
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

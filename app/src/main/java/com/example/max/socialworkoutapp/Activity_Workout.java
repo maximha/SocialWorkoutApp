@@ -3,6 +3,7 @@ package com.example.max.socialworkoutapp;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,7 +34,7 @@ public class Activity_Workout extends ActionBarActivity  {
 
     private ListView listView_Tasks;
     private PostHelper SHelper;
-
+    final Context context = this;
     private static final String TAG = "State";
 
     @Override
@@ -49,7 +50,7 @@ public class Activity_Workout extends ActionBarActivity  {
     }
 
     private  void  ShowTasksList(){
-        SHelper = new PostHelper();
+        SHelper = new PostHelper(context);
         SHelper.execute("http://localhost:36301/api/ListOfTaskName","ListOfTaskName",sharedGet());
         try {
             checkPostResultTaskList(showResult());

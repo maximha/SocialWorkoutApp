@@ -1,6 +1,7 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,7 +21,7 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
     EditText et_TaskName , et_Description , et_Time , et_Rev;
 
     private Button btnAct_Task_Save;
-
+    final Context context = this;
     private PostHelper SHelper;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
         switch (v.getId()) {
             case R.id.btn_Save_Task:
                 if(checkValidation()) {
-                    SHelper = new PostHelper();
+                    SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/AddTask","AddTask", sharedGet(), et_TaskName.getText().toString(),
                                             et_Description.getText().toString(),et_Time.getText().toString(), et_Rev.getText().toString());
                     try {
