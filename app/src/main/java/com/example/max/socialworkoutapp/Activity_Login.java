@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +16,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.concurrent.ExecutionException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 
 public class Activity_Login extends ActionBarActivity implements View.OnClickListener {
@@ -27,6 +36,8 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
     private static final String TAG = "State";
     private PostHelper SHelper;
     private boolean flag = true;
+    private KeyPair pair;
+    private String decryptedAesKey ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +73,12 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
             case R.id.btn_LogIn :
                 if(/*checkValidation ()*/true)//check if data entered is correct
                 {
+                    pair = RSA.generatePair(); //generate RSA private and public keys
+                    PublicKey publicKey = pair.getPublic(); //get RSA public key
+                    String pubKeyBytes = Base64.encodeToString(publicKey.getEncoded(), 0); //encode RSA public key to base 64 string format
+
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:36301/api/login","LogIn", et_User.getText().toString(), et_Password.getText().toString(),"rsaPassword");
+                    SHelper.execute("http://localhost:36301/api/login","LogIn", et_User.getText().toString(), et_Password.getText().toString(),pubKeyBytes);
                     try {
                         checkPostResult(showResult());
                     } catch (JSONException e) {
@@ -90,12 +105,14 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         if (json.getBoolean("result")) {
             //flag = false;
             String aesKey = null;
-            aesKey = getJesonArray(json);
+
+            aesKey = getJesonArray(json); //get encrypted key from server
+            decryptedAesKey = decryptKey(aesKey); //decrypt aes key with RSA private
             if (!flag) {
                 Toast.makeText(this, "Try again !!! "+aesKey, Toast.LENGTH_LONG).show();
                 return;
             }
-            sharedPut(et_User.getText().toString());
+            sharedPut(et_User.getText().toString(),decryptedAesKey); //put user name and aes key to shared memory
             Intent intentLogIn = new Intent(this, Activity_HomeMenu.class);
             startActivity(intentLogIn);
         } else {
@@ -140,10 +157,46 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         return ret;
     }
 
-    private void sharedPut(String userName)
+    private void sharedPut(String userName, String aesKey)
     {
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("userName", userName);
+        editor.putString("aesKey", aesKey);
         editor.commit();
+    }
+
+    private String decryptKey(String key) {
+        String decryptedKey = null;
+        if (key != null) {
+
+            // set key pair to RSA class to encrypt/decrypt
+            RSA rsa = new RSA(pair.getPrivate(), pair.getPublic());
+
+                byte[] encr = Base64.decode(key, 0);
+                byte[] dec = null;
+                try {
+                    dec = rsa.decryptRSA(encr);
+                } catch (InvalidKeyException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                byte[] base64 = Base64.encode(dec, Base64.NO_WRAP);
+                decryptedKey = new String(base64);
+                return decryptedKey;
+        }
+        return null;
     }
 }
