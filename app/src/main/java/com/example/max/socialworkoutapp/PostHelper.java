@@ -1,5 +1,7 @@
 package com.example.max.socialworkoutapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,6 +18,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class PostHelper extends AsyncTask<String, Void, String> {
 
@@ -24,8 +34,13 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     private Model_TaskItem task;
     private Model_WorkoutItem workout;
     private JSONObject jsonObject;
+    private Context mContext;
+    private String aesKey;
 
-
+    public PostHelper (Context context){
+        mContext = context;
+        aesKey = sharedGet();
+    }
 
     @Override
     protected String doInBackground(String... urls) {
@@ -259,26 +274,30 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         jsonObject.accumulate("publicKey", logIn.getRsaKey());
     }
 
-    private void setJsonRegistration() throws  JSONException
-    {
-        jsonObject.accumulate("firstName", registration.getFirstName());
-        jsonObject.accumulate("lastName", registration.getLastName());
-        jsonObject.accumulate("userName", registration.getUserName());
-        jsonObject.accumulate("password", registration.getPassword());
+    private void setJsonRegistration() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        jsonObject.accumulate("firstName",AES.encrypt(registration.getFirstName(), aesKey));
+        jsonObject.accumulate("lastName", AES.encrypt(registration.getLastName(),aesKey));
+        jsonObject.accumulate("userName", AES.encrypt(registration.getUserName(),aesKey));
+        jsonObject.accumulate("password", AES.encrypt(registration.getPassword(),aesKey));
     }
 
-    private void setJsonWorkout() throws JSONException
-    {
-        jsonObject.accumulate("userName", workout.getUserName());
-        jsonObject.accumulate("workoutName", workout.getWorkoutName());
+    private void setJsonWorkout() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        jsonObject.accumulate("userName", AES.encrypt(workout.getUserName(),aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(workout.getWorkoutName(),aesKey));
     }
 
-    private void setJsonTask() throws JSONException
+    private void setJsonTask() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        jsonObject.accumulate("workoutName", AES.encrypt(task.getWorkoutName(),aesKey));
+        jsonObject.accumulate("taskName", AES.encrypt(task.getTaskName(),aesKey));
+        jsonObject.accumulate("description", AES.encrypt(task.getDescriptionTask(),aesKey));
+        jsonObject.accumulate("time", AES.encrypt(task.getTimeTask(),aesKey));
+        jsonObject.accumulate("rev", AES.encrypt(task.getRevTask(),aesKey));
+    }
+
+    private String sharedGet()
     {
-        jsonObject.accumulate("workoutName", task.getWorkoutName());
-        jsonObject.accumulate("taskName", task.getTaskName());
-        jsonObject.accumulate("description", task.getDescriptionTask());
-        jsonObject.accumulate("time", task.getTimeTask());
-        jsonObject.accumulate("rev", task.getRevTask());
+        SharedPreferences editor;
+        editor = mContext.getSharedPreferences("shared_Memory", mContext.MODE_PRIVATE);
+        return  editor.getString("aesKey", null);
     }
 }

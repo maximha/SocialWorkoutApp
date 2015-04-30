@@ -38,7 +38,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     private static final String TAG = "State";
     final Context context = this;
     private PostHelper SHelper;
-
     private boolean flag = false;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     }
 
     private  void  ShowWorkoutsList(){
-        SHelper = new PostHelper();
+        SHelper = new PostHelper(context);
         SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName",sharedGet());
         try {
             checkPostResultWorkoutList(showResult());
@@ -196,7 +195,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             public void onClick(DialogInterface dialog, int id){
                 String inputResult = (workoutNameInput.getText().toString());
                 if(true) {
-                    SHelper = new PostHelper();
+                    SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/addworkout","Workout", sharedGet(), inputResult);
                     try {
                         strArr.add(inputResult);

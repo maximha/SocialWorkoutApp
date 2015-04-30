@@ -1,6 +1,7 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
     private Button btnActSave;
     private static final String TAG = "State";
     private PostHelper SHelper;
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
         switch (v.getId()) {
             case R.id.btn_Save_ChangeProf:
                 if(checkValidation()) {
-                    SHelper = new PostHelper();
+                    SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/ChangeProfile","ChangeProfile", et_FirstName.getText().toString(), et_LastName.getText().toString(), sharedGet(), et_Pass.getText().toString());
                     try {
                         checkPostResult(showResult());

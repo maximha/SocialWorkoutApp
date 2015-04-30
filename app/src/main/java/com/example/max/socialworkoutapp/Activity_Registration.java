@@ -1,6 +1,7 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -22,6 +23,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
     private Button btnActRegistration;
     private static final String TAG = "State";
     private PostHelper SHelper;
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +61,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         switch (v.getId()) {
             case R.id.btn_Registration:
                 if(checkValidation()) {
-                    SHelper = new PostHelper();
+                    SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/registration","Registration", et_FirstName.getText().toString(), et_LastName.getText().toString(),et_UserName.getText().toString(), et_Pass.getText().toString());
                     try {
                         checkPostResult(showResult());
