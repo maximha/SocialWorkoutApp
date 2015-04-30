@@ -54,12 +54,7 @@ public class Activity_Task extends ActionBarActivity {
     }
 
     public void registerViews() {
-        linearLayout_Task = (LinearLayout) findViewById(R.id.LinearLayout_Task);
-        linearLayout_Task_1 = (LinearLayout) findViewById(R.id.LinearLayout_Task_1);
-        linearLayout_Task_1_1 = (LinearLayout) findViewById(R.id.LinearLayout_Task_1_1);
-        linearLayout_Task_2 = (LinearLayout) findViewById(R.id.LinearLayout_Task_2);
-        linearLayout_Task_2_1 = (LinearLayout) findViewById(R.id.LinearLayout_Task_2_1);
-        linearLayout_Task_2_2 = (LinearLayout) findViewById(R.id.LinearLayout_Task_2_2);
+
         tv_taskname = (TextView) findViewById(R.id.tv_row_taskName);
         row_taskName = (TextView) findViewById(R.id.row_taskName);
         row_description = (TextView) findViewById(R.id.row_description);

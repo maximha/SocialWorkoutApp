@@ -176,6 +176,7 @@ public class Activity_Workout extends ActionBarActivity  {
         if(id == R.id.btn_add_task){
             Intent intentPlus_W = new Intent(this, Activity_CreateNewTask.class);
             startActivity(intentPlus_W);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

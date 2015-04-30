@@ -83,6 +83,7 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
             // Save Button in Create New Task page
             Intent intentMyWorkouts = new Intent(this, Activity_Workout.class);
             startActivity(intentMyWorkouts);
+            finish();
         } else {
             Toast.makeText(this, "This task already exist !!!",
                     Toast.LENGTH_LONG).show();
