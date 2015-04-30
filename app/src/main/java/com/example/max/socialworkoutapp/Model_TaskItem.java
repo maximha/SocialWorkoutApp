@@ -4,10 +4,20 @@ package com.example.max.socialworkoutapp;
 
 public class Model_TaskItem {
 
+    private String workoutName;
+
     private String taskName;
     private String descriptionTask;
     private String timeTask;
     private String revTask;
+
+    public String getWorkoutName() {
+        return workoutName;
+    }
+
+    public void setWorkoutName(String workoutName) {
+        this.workoutName = workoutName;
+    }
 
     public String getTaskName() {
         return taskName;

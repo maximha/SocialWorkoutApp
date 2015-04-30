@@ -1,39 +1,68 @@
 <resources>
-    <string name="app_name">SocialWorkoutApp</string>
+    <string name="app_name">SocialWorkoutApp</string>\
+
     <string name="about">About</string>
+
     <string name="logIn">Log In</string>
+
     <string name="logOut">Log Out</string>
+
     <string name="action_Home">Home</string>
+
     <string name="registration">Registration</string>
+
     <string name="changeProfile">Change Profile</string>
+
     <string name="my_Workouts">My Workouts</string>
+
     <string name="new_Workout">New Workout</string>
+
     <string name="storage_Workouts">Storage Workouts</string>
+
     <string name="workout">Workout</string>
+
     <string name="firstName">First Name</string>
     <string name="tv_firstName">First Name :</string>
+
     <string name="lastName">Last Name</string>
     <string name="tv_lastName">Last Name :</string>
+
     <string name="userName">User Name</string>
     <string name="tv_userName">User Name :</string>
+
     <string name="password">Password</string>
     <string name="tv_password">Password :</string>
+
     <string name="confirmPassword">Confirm Password</string>
     <string name="tv_confirmPassword">Confirm Pass :</string>
+
     <string name="save">Save</string>
+    <string name="delete">Delete</string>
+
     <string name="createNewWorkout">Create New Workout</string>
+
     <string name="imageProfile">Image Profile</string>
+
     <string name="addToFavoritesMenu">Add to Favorites</string>
+
     <string name="tv_taskName">Task name :</string>
     <string name="taskName">Task Name</string>
+
     <string name="tv_taskTime">Time :</string>
     <string name="taskTime">Time</string>
+
     <string name="tv_taskRev">Rev :</string>
     <string name="taskRev">Rev</string>
+
     <string name="description">Description</string>
+
     <string name="tv_workoutName">Workout Name :</string>
     <string name="workoutName">Workout Name</string>
-    <string name="delete">Delete</string>
+
+
     <string name="addWorkout">add</string>
+    <string name="addTask">add</string>
     <string name="hint_dialo_add_workout_name">Enter workout name</string>
+
+    <string name="edit_task">Edit Task</string>
 </resources>

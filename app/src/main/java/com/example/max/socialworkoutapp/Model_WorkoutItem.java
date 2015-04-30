@@ -4,8 +4,17 @@ import java.util.ArrayList;
 
 public class Model_WorkoutItem {
 
+    private String userName;
     private String workoutName;
     private ArrayList<Model_TaskItem> taskItems;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getWorkoutName() {
         return workoutName;

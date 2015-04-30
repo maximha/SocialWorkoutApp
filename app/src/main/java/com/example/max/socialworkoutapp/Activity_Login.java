@@ -63,7 +63,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
                 if(/*checkValidation ()*/true)//check if data entered is correct
                 {
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:1821/api/login","LogIn", et_User.getText().toString(), et_Password.getText().toString(),"rsaPassword");
+                    SHelper.execute("http://localhost:36301/api/login","LogIn", et_User.getText().toString(), et_Password.getText().toString(),"rsaPassword");
                     try {
                         checkPostResult(showResult());
                     } catch (JSONException e) {

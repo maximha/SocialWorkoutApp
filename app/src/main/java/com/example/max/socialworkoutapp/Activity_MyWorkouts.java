@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -20,8 +21,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class Activity_MyWorkouts extends ActionBarActivity{
 
@@ -30,6 +37,9 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     private ArrayAdapter<String> adapter;
     private static final String TAG = "State";
     final Context context = this;
+    private PostHelper SHelper;
+
+    private boolean flag = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,12 +48,25 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
         registerViews();
 
-        strArr = new ArrayList<String>();
-        for (int i = 0 ; i < 15 ; i++){
-            strArr.add("WORKOUT : " + i);
-        }
+        ShowWorkoutsList();
 
         defineArrayAdapter();
+    }
+
+    public void registerViews() {
+        listView_MyWorkouts = (ListView) findViewById(R.id.list_MyWorkouts);
+    }
+
+    private  void  ShowWorkoutsList(){
+        SHelper = new PostHelper();
+        SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName",sharedGet());
+        try {
+            checkPostResultWorkoutList(showResult());
+            ///checkPostResult(showResult());
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void defineArrayAdapter(){
@@ -57,9 +80,11 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         listView_MyWorkouts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
-                // We know the View is a TextView so we can cast it
-                //TextView clickedView = (TextView) view;
-                //Toast.makeText(MyWorkouts.this, "Item with id ["+id+"] - Position ["+position+"] - WORK ["+clickedView.getText()+"]", Toast.LENGTH_SHORT).show();
+
+                String data=(String)parentAdapter.getItemAtPosition(position);
+
+                sharedPut(data);
+
                 Intent intentItemPress_MW = null;
                 intentItemPress_MW = new Intent(Activity_MyWorkouts.this, Activity_Workout.class);
 
@@ -67,10 +92,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                     startActivity(intentItemPress_MW);
             }
         });
-    }
-
-    public void registerViews() {
-        listView_MyWorkouts = (ListView) findViewById(R.id.list_MyWorkouts);
     }
 
     @Override
@@ -169,12 +190,27 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setTitle("Add workout name");
         alertDialogBuilder.setView(dialog_add_workout_name);
-        final EditText userInput = (EditText)dialog_add_workout_name.findViewById(R.id.et_dialog_add_workout_name);
+        final EditText workoutNameInput = (EditText)dialog_add_workout_name.findViewById(R.id.et_dialog_add_workout_name);
+        //flag = checkValidation();
         alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int id){
-                String inputResult = (userInput.getText().toString());
-                strArr.add(inputResult);
-                defineArrayAdapter();
+                String inputResult = (workoutNameInput.getText().toString());
+                if(true) {
+                    SHelper = new PostHelper();
+                    SHelper.execute("http://localhost:36301/api/addworkout","Workout", sharedGet(), inputResult);
+                    try {
+                        strArr.add(inputResult);
+                        checkPostResult(showResult());
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } /*else {
+                    Toast.makeText(this, "Form contains error", Toast.LENGTH_LONG)
+                            .show();
+                }*/
+                //strArr.add(inputResult);
+                //defineArrayAdapter();
 
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -186,5 +222,85 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         alertDialog.show();
     }
 
+    //check validation
+    /*private boolean checkValidation(String input) {
+        boolean ret = true;
+        EditText textToCheck ;
+        textToCheck.setText(input);
 
+        if (!EditText_Validators.isName(userInput, true)) ret = false;
+        return ret;
+    }*/
+
+    // check if user allow to register
+    public void checkPostResult(String result) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            // Save Button in Create New Task page
+            defineArrayAdapter();
+            //Intent intentMyWorkouts = new Intent(this, Activity_MyWorkouts.class);
+            //startActivity(intentMyWorkouts);
+        } else {
+            Toast.makeText(this, "This workout already exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
+    // get response from http request
+    private String showResult() {
+        if (SHelper == null)
+            return null;
+        try {
+            return SHelper.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void sharedPut(String workoutName)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
+        editor.putString("workoutName", workoutName);
+        editor.commit();
+    }
+
+    private String sharedGet()
+    {
+        SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
+        return  editor.getString("userName", null);
+    }
+
+    private void checkPostResultWorkoutList(String result) throws JSONException{
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            String[] jsonArr = null;
+            jsonArr = getJsonArray(json);
+            strArr = new ArrayList<String>();
+            for (int i = 0 ; i < jsonArr.length ; i++){
+
+                strArr.add(jsonArr[i]);
+            }
+        } else {
+            Toast.makeText(this, "This workout already exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+    private String[] getJsonArray(JSONObject json){
+        String[] modelNames = null;
+        try {
+            JSONArray workouts = json.getJSONArray("workouts");
+            modelNames = new String[workouts.length()];
+            for (int i = 0; i< workouts.length() ; i++ ){
+                modelNames[i] = workouts.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return modelNames;
+    }
 }

@@ -53,7 +53,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
             case R.id.btn_Save_ChangeProf:
                 if(checkValidation()) {
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:1821/api/ChangeProfile","ChangeProfile", et_FirstName.getText().toString(), et_LastName.getText().toString(), sharedGet(), et_Pass.getText().toString());
+                    SHelper.execute("http://localhost:36301/api/ChangeProfile","ChangeProfile", et_FirstName.getText().toString(), et_LastName.getText().toString(), sharedGet(), et_Pass.getText().toString());
                     try {
                         checkPostResult(showResult());
                     } catch (JSONException e) {
@@ -77,7 +77,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
             Intent intentSaveChangeProf = new Intent(this, Activity_HomeMenu.class);
             startActivity(intentSaveChangeProf);
         } else {
-            Toast.makeText(this, "This user already exist !!!",
+            Toast.makeText(this, "Change Profile failure !!!",
                     Toast.LENGTH_LONG).show();
             return;
         }

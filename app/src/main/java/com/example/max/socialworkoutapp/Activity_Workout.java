@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -15,11 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class Activity_Workout extends ActionBarActivity  {
 
@@ -27,11 +32,7 @@ public class Activity_Workout extends ActionBarActivity  {
     private ArrayList<String> strArr_Tasks;
 
     private ListView listView_Tasks;
-    //ArrayList<WorkoutItem> workoutList;
-    //WorkoutItemAdapter adapter;
-
-    // contacts JSONArray
-    //JSONArray jsonWorkout = null;
+    private PostHelper SHelper;
 
     private static final String TAG = "State";
 
@@ -42,29 +43,57 @@ public class Activity_Workout extends ActionBarActivity  {
 
         registerViews();
 
-        //workoutList = new ArrayList<WorkoutItem>();
+        ShowTasksList();
 
-        strArr_Tasks = new ArrayList<String>();
-        for (int i = 0 ; i < 15 ; i++){
-            strArr_Tasks.add(i,"TASK : " + i);
+        defineArrayAdapter();
+    }
+
+    private  void  ShowTasksList(){
+        SHelper = new PostHelper();
+        SHelper.execute("http://localhost:36301/api/ListOfTaskName","ListOfTaskName",sharedGet());
+        try {
+            checkPostResultTaskList(showResult());
+
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+    }
+
+    public void registerViews() {
+        listView_Tasks = (ListView) findViewById(R.id.list_tasks_name);
+    }
+
+    private void defineArrayAdapter(){
 
         adapter = new ArrayAdapter<String>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArr_Tasks);
         listView_Tasks.setAdapter(adapter);
 
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        /*android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Workout");
 
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
-
-        //new GetWorkout().execute("");// Http or JSON path
+        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );*/
 
         registerForContextMenu(listView_Tasks);
-    }
 
-    public void registerViews() {
-        listView_Tasks = (ListView) findViewById(R.id.list_Tasks);
+        // React to user clicks on item
+        listView_Tasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
+
+                String data=(String)parentAdapter.getItemAtPosition(position);
+
+                sharedPut(data);
+
+                Intent intentItemPress_MW = null;
+                intentItemPress_MW = new Intent(Activity_Workout.this, Activity_Task.class);
+
+                if(intentItemPress_MW != null)
+                    startActivity(intentItemPress_MW);
+            }
+        });
+
     }
 
     @Override
@@ -134,7 +163,7 @@ public class Activity_Workout extends ActionBarActivity  {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_add_workout, menu);
+        inflater.inflate(R.menu.menu_add_task, menu);
         return true;
     }
     @Override
@@ -144,12 +173,70 @@ public class Activity_Workout extends ActionBarActivity  {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.btn_add_workout){
+        if(id == R.id.btn_add_task){
             Intent intentPlus_W = new Intent(this, Activity_CreateNewTask.class);
             startActivity(intentPlus_W);
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void sharedPut(String taskName)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
+        editor.putString("taskName", taskName);
+        editor.commit();
+    }
+
+    private String sharedGet()
+    {
+        SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
+        return  editor.getString("workoutName", null);
+    }
+
+    // get response from http request
+    private String showResult() {
+        if (SHelper == null)
+            return null;
+        try {
+            return SHelper.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void checkPostResultTaskList(String result) throws JSONException{
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            String[] jsonArr = null;
+            jsonArr = getJsonArray(json);
+            strArr_Tasks = new ArrayList<String>();
+            for (int i = 0 ; i < jsonArr.length ; i++){
+
+                strArr_Tasks.add(jsonArr[i]);
+            }
+        } else {
+            Toast.makeText(this, "This task already exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+    private String[] getJsonArray(JSONObject json){
+        String[] modelNames = null;
+        try {
+            JSONArray tasks = json.getJSONArray("tasksList");
+            modelNames = new String[tasks.length()];
+            for (int i = 0; i< tasks.length() ; i++ ){
+                modelNames[i] = tasks.getString(i);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return modelNames;
+    }
+
 
 }

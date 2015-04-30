@@ -53,12 +53,6 @@
             android:name=".Activity_Workout"
             android:label="Workout">
         </activity>
-
-        <activity
-            android:name=".Activity_CreateNewWorkout"
-            android:label="Create New Workout">
-        </activity>
-
         <activity
             android:name=".Activity_CreateNewTask"
             android:label="Create New Task">
@@ -68,7 +62,11 @@
             android:name=".Activity_Workout_Without_Action"
             android:label="Workout">
         </activity>
+        <activity
+            android:name=".Activity_Task"
+            android:label="Task">
 
+            </activity>
     </application>
 
 </manifest>
