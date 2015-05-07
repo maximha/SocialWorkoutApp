@@ -6,12 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,7 +20,6 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
     EditText et_FirstName , et_LastName , et_Pass , et_ConfirmPass;
 
     private Button btnActSave;
-    private static final String TAG = "State";
     private PostHelper SHelper;
     final Context context = this;
 

@@ -10,15 +10,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutionException;
 
 public class Activity_Task extends ActionBarActivity {
@@ -35,13 +32,20 @@ public class Activity_Task extends ActionBarActivity {
 
 
         registerViews();
-        ShowTask();
+        try {
+            ShowTask();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         defineArrayAdapter();
     }
 
-    private  void  ShowTask(){
+    private  void  ShowTask() throws GeneralSecurityException, IOException {
+        String[] shared = sharedGet();
         SHelper = new PostHelper(context);
-        SHelper.execute("http://localhost:36301/api/TaskByName","Task",sharedGet());
+        SHelper.execute("http://localhost:36301/api/TaskByName", "Task", shared[0]);
         try {
             checkPostResultTask(showResult());
 
@@ -67,7 +71,7 @@ public class Activity_Task extends ActionBarActivity {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Task");
 
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
     }
 
     @Override
@@ -92,10 +96,11 @@ public class Activity_Task extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private String sharedGet()
+    private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        return  editor.getString("taskName", null);
+        String[] sharedData = {editor.getString("taskName", null) ,editor.getString("aesKey", null)};
+        return  sharedData;
     }
 
     // get response from http request
@@ -112,22 +117,12 @@ public class Activity_Task extends ActionBarActivity {
         return null;
     }
 
-    private void checkPostResultTask(String result) throws JSONException{
+    private void checkPostResultTask(String result) throws JSONException, GeneralSecurityException, IOException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-           // String[] jsonArr = null;
-            //jsonArr = getJsonArray(json);
-            Model_TaskItem model = new Model_TaskItem();
+            Model_TaskItem model ;
             model = getJsonArray(json);
-            /*strArr_Tasks = new ArrayList<String>();
-            for (int i = 0 ; i < jsonArr.length ; i++){
-
-                strArr_Tasks.add(jsonArr[i]);
-            }*/
-            /*row_taskName.setText(jsonArr[0]);
-            row_description.setText(jsonArr[1]);
-            row_taskTime.setText(jsonArr[2]);
-            row_taskRew.setText(jsonArr[3]);*/
+            model = aesDecrypt(model);
             row_taskName.setText(model.getTaskName());
             row_description.setText(model.getDescriptionTask());
             row_taskTime.setText(model.getTimeTask());
@@ -140,7 +135,6 @@ public class Activity_Task extends ActionBarActivity {
         }
     }
     private Model_TaskItem getJsonArray(JSONObject json){
-       // String[] modelTaskElements = null;
         Model_TaskItem model = new Model_TaskItem();
         try {
             JSONObject c = json.getJSONObject("itemTask");
@@ -155,14 +149,19 @@ public class Activity_Task extends ActionBarActivity {
             model.setDescriptionTask(desc);
             model.setTimeTask(time);
             model.setRevTask(rev);
-           /* JSONArray tasks = json.getJSONArray("itemTask");
-            modelTaskElements = new String[tasks.length()];
-            for (int i = 0; i< tasks.length() ; i++ ){
-                modelTaskElements[i] = tasks.getString(i);
-            }*/
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return model;
+    }
+
+    private Model_TaskItem aesDecrypt(Model_TaskItem encryptedModel) throws GeneralSecurityException, IOException {
+        String[] shared = sharedGet();
+        encryptedModel.setDescriptionTask(AES.decrypt(encryptedModel.getDescriptionTask(),shared[1]));
+        encryptedModel.setRevTask(AES.decrypt(encryptedModel.getRevTask(), shared[1]));
+        encryptedModel.setTaskName(AES.decrypt(encryptedModel.getTaskName(), shared[1]));
+        encryptedModel.setTimeTask(AES.decrypt(encryptedModel.getTimeTask(), shared[1]));
+        encryptedModel.setWorkoutName(AES.decrypt(encryptedModel.getWorkoutName(), shared[1]));
+        return  encryptedModel;
     }
 }

@@ -1,14 +1,10 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -30,7 +26,7 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
 
         //workoutList = new ArrayList<WorkoutItem>();
 
-        strArr_Tasks = new ArrayList<String>();
+        strArr_Tasks = new ArrayList<>();
         for (int i = 0 ; i < 15 ; i++){
             strArr_Tasks.add(i,"TASK : " + i);
         }
@@ -40,7 +36,7 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
 
     private void defineArrayAdapter(){
 
-        adapter = new ArrayAdapter<String>(getApplicationContext()
+        adapter = new ArrayAdapter<>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArr_Tasks);
         listView_Tasks.setAdapter(adapter);
 

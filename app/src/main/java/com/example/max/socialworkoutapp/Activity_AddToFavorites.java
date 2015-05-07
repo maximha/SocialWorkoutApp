@@ -20,7 +20,6 @@ public class Activity_AddToFavorites extends ActionBarActivity implements View.O
     private ArrayList<String> strArr;
     private ListView listView_FavoritesWorkouts;
     private ArrayAdapter<String> adapter;
-    //private static final String TAG = "State";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +28,12 @@ public class Activity_AddToFavorites extends ActionBarActivity implements View.O
 
         listView_FavoritesWorkouts = (ListView) findViewById(R.id.list_Add_To_Favorites_Workouts);
 
-        strArr = new ArrayList<String>();
+        strArr = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
             strArr.add("WORKOUT : " + i);
         }
 
-        adapter = new ArrayAdapter<String>(getApplicationContext()
+        adapter = new ArrayAdapter<>(getApplicationContext()
                 , android.R.layout.simple_list_item_1, strArr);
         listView_FavoritesWorkouts.setAdapter(adapter);
 
@@ -97,7 +96,6 @@ public class Activity_AddToFavorites extends ActionBarActivity implements View.O
         alert.show();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        //actionBar.setTitle("My Workouts");
 
         actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
 

@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +20,6 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
     EditText et_FirstName , et_LastName , et_UserName , et_Pass , et_ConfirmPass;
 
     private Button btnActRegistration;
-    private static final String TAG = "State";
     private PostHelper SHelper;
     final Context context = this;
 
