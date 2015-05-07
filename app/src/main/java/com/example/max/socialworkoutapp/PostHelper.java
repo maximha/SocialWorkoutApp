@@ -1,5 +1,6 @@
 package com.example.max.socialworkoutapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -58,6 +59,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 7;
         if(urls[1].equals("Task"))
             status = 8;
+        if(urls[1].equals("RegistrationKey"))
+            status = 9;
 
         switch(status){
             case 1:
@@ -84,14 +87,23 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             case 8:
                 setTaskName(urls[2]);
                 return POST(urls[0],urls[1]);
+            case 9:
+                setRsaPublicKey(urls[2]);
+                return  POST(urls[0],urls[1]);
             default:
                 return null;
         }
     }
 
+    protected void onPreExecute() {
+
+    }
+
+
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
+
     }
 
 
@@ -128,6 +140,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 7;
             if(cs.equals("Task"))
                 status = 8;
+            if(cs.equals("RegistrationKey"))
+                status = 9;
 
             switch(status){
                 case 1:
@@ -153,6 +167,9 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                     break;
                 case 8:
                     setJsonTask();
+                    break;
+                case 9:
+                    setJsonLogIn();
                     break;
                 default:
                     break;
@@ -201,6 +218,14 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         inputStream.close();
         return result;
 
+    }
+
+    private void setRsaPublicKey(String urls1)
+    {
+        logIn = new Model_Login();
+        logIn.setUserName("");
+        logIn.setPassword("");
+        logIn.setRsaKey(urls1);
     }
 
     private void setModelLogIn(String urls1, String urls2, String urls3)
@@ -276,10 +301,10 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     }
 
     private void setJsonRegistration() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        jsonObject.accumulate("firstName",AES.encrypt(registration.getFirstName(), aesKey));
-        jsonObject.accumulate("lastName", AES.encrypt(registration.getLastName(),aesKey));
-        jsonObject.accumulate("userName", AES.encrypt(registration.getUserName(),aesKey));
-        jsonObject.accumulate("password", AES.encrypt(registration.getPassword(),aesKey));
+        jsonObject.accumulate("firstName",registration.getFirstName());
+        jsonObject.accumulate("lastName", registration.getLastName());
+        jsonObject.accumulate("userName", registration.getUserName());
+        jsonObject.accumulate("password", registration.getPassword());
     }
 
     private void setJsonWorkout() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -12,8 +13,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.concurrent.ExecutionException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class Activity_Registration extends ActionBarActivity implements View.OnClickListener {
 
@@ -22,6 +31,8 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
     private Button btnActRegistration;
     private PostHelper SHelper;
     final Context context = this;
+    private KeyPair pair;
+    private String decryptedAesKey ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +70,25 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         switch (v.getId()) {
             case R.id.btn_Registration:
                 if(checkValidation()) {
+                    pair = RSA.generatePair(); //generate RSA private and public keys
+                    PublicKey publicKey = pair.getPublic(); //get RSA public key
+                    String pubKeyBytes = Base64.encodeToString(publicKey.getEncoded(), 0); //encode RSA public key to base 64 string format
+
                     SHelper = new PostHelper(context);
-                    SHelper.execute("http://localhost:36301/api/registration","Registration", et_FirstName.getText().toString(), et_LastName.getText().toString(),et_UserName.getText().toString(), et_Pass.getText().toString());
+                    SHelper.execute("http://localhost:36301/api/registrationkey","RegistrationKey", pubKeyBytes);
                     try {
-                        checkPostResult(showResult());
+                        try {
+                            checkPostResultPreRegistration(showResult());
+                        } catch (GeneralSecurityException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+
                 } else {
                     Toast.makeText(this, "Form contains error", Toast.LENGTH_LONG)
                             .show();
@@ -77,11 +99,38 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         }
     }
 
+    public void checkPostResultPreRegistration(String result) throws JSONException, GeneralSecurityException, IOException//check if user allow to get stream
+    {
+        JSONObject json = new JSONObject(result);
+        if (json.getBoolean("result")) {
+            String aesKey;
+            aesKey = getJesonArray(json); //get encrypted key from server
+            decryptedAesKey = decryptKey(aesKey); //decrypt aes key with RSA private
+            SHelper = new PostHelper(context);
+            SHelper.execute("http://localhost:36301/api/registration","Registration", AES.encrypt(et_FirstName.getText().toString(), decryptedAesKey), AES.encrypt(et_LastName.getText().toString(), decryptedAesKey),AES.encrypt(et_UserName.getText().toString(), decryptedAesKey), AES.encrypt(et_Pass.getText().toString(), decryptedAesKey));
+            try {
+                        checkPostResult(showResult());
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+        } else {
+            Toast.makeText(
+                    this,
+                    "Try again !!!", Toast.LENGTH_LONG)
+                    .show();
+            // Registration Button
+            Intent intentRegistration = new Intent(this , Activity_Registration.class);
+            startActivity(intentRegistration);
+        }
+    }
+
     // check if user allow to register
     public void checkPostResult(String result) throws JSONException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            Intent intentRegistration = new Intent(this, Activity_HomeMenu.class);
+            Intent intentRegistration = new Intent(this, Activity_Login.class);
             startActivity(intentRegistration);
             finish();
         } else {
@@ -89,6 +138,16 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
                     Toast.LENGTH_LONG).show();
             return;
         }
+    }
+
+    private String getJesonArray(JSONObject json) {
+        String keyRsult = null;
+        try {
+            keyRsult = json.getString("publicKey");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } // convert String to JSONObject
+        return keyRsult;
     }
 
     // get response from http request
@@ -101,6 +160,41 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String decryptKey(String key) {
+        String decryptedKey;
+        if (key != null) {
+
+            // set key pair to RSA class to encrypt/decrypt
+            RSA rsa = new RSA(pair.getPrivate(), pair.getPublic());
+
+            byte[] encr = Base64.decode(key, 0);
+            byte[] dec = null;
+            try {
+                dec = rsa.decryptRSA(encr);
+            } catch (InvalidKeyException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchPaddingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalBlockSizeException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (BadPaddingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            byte[] base64 = Base64.encode(dec, Base64.NO_WRAP);
+            decryptedKey = new String(base64);
+            return decryptedKey;
         }
         return null;
     }
