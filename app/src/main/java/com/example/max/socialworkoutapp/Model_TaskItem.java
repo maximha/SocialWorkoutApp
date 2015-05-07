@@ -5,7 +5,6 @@ package com.example.max.socialworkoutapp;
 public class Model_TaskItem {
 
     private String workoutName;
-
     private String taskName;
     private String descriptionTask;
     private String timeTask;

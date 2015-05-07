@@ -1,9 +1,7 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -24,7 +22,6 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
     private ArrayList<String> strArrStorage;
     private ListView listView_StorageWorkouts;
     private ArrayAdapter<String> adapter;
-    private static final String TAG = "State";
     final Context context = this;
 
     @Override
@@ -33,12 +30,12 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         setContentView(R.layout.storage_workouts_page);
 
         listView_StorageWorkouts = (ListView) findViewById(R.id.list_Storage);
-        strArrStorage = new ArrayList<String>();
+        strArrStorage = new ArrayList<>();
         for (int i = 0 ; i < 15 ; i++){
             strArrStorage.add("WORKOUT : " + i);
         }
 
-        adapter = new ArrayAdapter<String>(getApplicationContext()
+        adapter = new ArrayAdapter<>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArrStorage);
         listView_StorageWorkouts.setAdapter(adapter);
 

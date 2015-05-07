@@ -2,14 +2,12 @@ package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,13 +17,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class Activity_Workout extends ActionBarActivity  {
 
@@ -35,7 +40,6 @@ public class Activity_Workout extends ActionBarActivity  {
     private ListView listView_Tasks;
     private PostHelper SHelper;
     final Context context = this;
-    private static final String TAG = "State";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +48,35 @@ public class Activity_Workout extends ActionBarActivity  {
 
         registerViews();
 
-        ShowTasksList();
+        try {
+            ShowTasksList();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         defineArrayAdapter();
     }
 
-    private  void  ShowTasksList(){
+    private  void  ShowTasksList() throws GeneralSecurityException, IOException {
+        String[] shared = sharedGet();
         SHelper = new PostHelper(context);
-        SHelper.execute("http://localhost:36301/api/ListOfTaskName","ListOfTaskName",sharedGet());
+        SHelper.execute("http://localhost:36301/api/ListOfTaskName", "ListOfTaskName", shared[0]);
         try {
             checkPostResultTaskList(showResult());
 
@@ -71,11 +96,6 @@ public class Activity_Workout extends ActionBarActivity  {
                 , android.R.layout.simple_list_item_1 , strArr_Tasks);
         listView_Tasks.setAdapter(adapter);
 
-        /*android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Workout");
-
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );*/
-
         registerForContextMenu(listView_Tasks);
 
         // React to user clicks on item
@@ -83,14 +103,14 @@ public class Activity_Workout extends ActionBarActivity  {
             @Override
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
 
-                String data=(String)parentAdapter.getItemAtPosition(position);
+                String data = (String) parentAdapter.getItemAtPosition(position);
 
                 sharedPut(data);
 
-                Intent intentItemPress_MW = null;
+                Intent intentItemPress_MW ;
                 intentItemPress_MW = new Intent(Activity_Workout.this, Activity_Task.class);
 
-                if(intentItemPress_MW != null)
+                if (intentItemPress_MW != null)
                     startActivity(intentItemPress_MW);
             }
         });
@@ -103,7 +123,7 @@ public class Activity_Workout extends ActionBarActivity  {
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         MenuInflater inflater = getMenuInflater();
-        menu.setHeaderTitle("Option of item "+info.position);
+        menu.setHeaderTitle("Option of item " + info.position);
         inflater.inflate(R.menu.delete_menu, menu);
     }
 
@@ -155,7 +175,7 @@ public class Activity_Workout extends ActionBarActivity  {
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Workout");
 
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 
         registerForContextMenu(listView_Tasks);
     }
@@ -190,10 +210,11 @@ public class Activity_Workout extends ActionBarActivity  {
         editor.commit();
     }
 
-    private String sharedGet()
+    private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        return  editor.getString("workoutName", null);
+        String[] sharedData = {editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
+        return  sharedData;
     }
 
     // get response from http request
@@ -210,12 +231,13 @@ public class Activity_Workout extends ActionBarActivity  {
         return null;
     }
 
-    private void checkPostResultTaskList(String result) throws JSONException{
+    private void checkPostResultTaskList(String result) throws JSONException, GeneralSecurityException, IOException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            String[] jsonArr = null;
+            String[] jsonArr ;
             jsonArr = getJsonArray(json);
-            strArr_Tasks = new ArrayList<String>();
+            jsonArr = aesDecrypt(jsonArr);
+            strArr_Tasks = new ArrayList<>();
             for (int i = 0 ; i < jsonArr.length ; i++){
 
                 strArr_Tasks.add(jsonArr[i]);
@@ -238,6 +260,15 @@ public class Activity_Workout extends ActionBarActivity  {
             e.printStackTrace();
         }
         return modelNames;
+    }
+
+    private String[] aesDecrypt(String[] encryptedText) throws GeneralSecurityException, IOException {
+        String[] shared = sharedGet();
+        for(int i=0;i<encryptedText.length;i++)
+        {
+            encryptedText[i] = AES.decrypt(encryptedText[i],shared[1]);
+        }
+        return  encryptedText;
     }
 
 

@@ -12,17 +12,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.concurrent.ExecutionException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -34,7 +30,6 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
 
     private Button btnActLogin;
     private Button btnActHomeRegistration;
-    private static final String TAG = "State";
     private PostHelper SHelper;
     private boolean flag = true;
     private KeyPair pair;
@@ -70,7 +65,6 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "on the ID button to determine which causes the handler");
         switch (v.getId()){
             case R.id.btn_LogIn :
                 if(/*checkValidation ()*/true)//check if data entered is correct
@@ -90,7 +84,6 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
                 }
                 break;
             case R.id.btn_homeRegistration :
-                Log.d(TAG , "Registration Button Pressed");
                 // Registration Button
                 Intent intentRegistration = new Intent(this , Activity_Registration.class);
                 startActivity(intentRegistration);
@@ -105,9 +98,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
     {
         JSONObject json = new JSONObject(result);
         if (json.getBoolean("result")) {
-            //flag = false;
-            String aesKey = null;
-
+            String aesKey;
             aesKey = getJesonArray(json); //get encrypted key from server
             decryptedAesKey = decryptKey(aesKey); //decrypt aes key with RSA private
             if (!flag) {
@@ -168,7 +159,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
     }
 
     private String decryptKey(String key) {
-        String decryptedKey = null;
+        String decryptedKey;
         if (key != null) {
 
             // set key pair to RSA class to encrypt/decrypt

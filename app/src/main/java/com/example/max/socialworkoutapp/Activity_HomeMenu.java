@@ -12,10 +12,8 @@ import android.widget.Button;
 
 public class Activity_HomeMenu extends ActionBarActivity implements View.OnClickListener {
 
-    //private Button btnActChangeProf;
     private Button btnActMyWorkouts;
     private Button btnActStorageWorkouts;
-    private static final String TAG = "State";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +70,11 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_MyWorkouts:
-                Log.d(TAG, "MyWorkouts Button Pressed");
                 // MyWorkouts Button in Home menu page
                 Intent intentMyWorkouts = new Intent(this, Activity_MyWorkouts.class);
                 startActivity(intentMyWorkouts);
                 break;
             case R.id.btn_Storage:
-                Log.d(TAG, "Storage Button Pressed");
                 // Storage Button in Home menu page
                 Intent intentStorageWorkouts = new Intent(this, Activity_StorageWorkouts.class);
                 startActivity(intentStorageWorkouts);

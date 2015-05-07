@@ -1,7 +1,5 @@
 package com.example.max.socialworkoutapp;
 
-
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,15 +16,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -35,7 +30,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -48,8 +42,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     private static final String TAG = "State";
     final Context context = this;
     private PostHelper SHelper;
-
-    private boolean flag = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +71,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         } catch (IOException e) {
             e.printStackTrace();
         }
-//yggf
+
         defineArrayAdapter();
     }
 
@@ -89,12 +81,10 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
     private  void  ShowWorkoutsList() throws GeneralSecurityException, IOException {
         String[] shared = sharedGet();
-        String encryptedUsername = AES.encrypt(shared[0],shared[1]);
         SHelper = new PostHelper(context);
-        SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName", encryptedUsername);
+        SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName", shared[0]);
         try {
             checkPostResultWorkoutList(showResult());
-            ///checkPostResult(showResult());
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -102,7 +92,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     }
 
     private void defineArrayAdapter(){
-        adapter = new ArrayAdapter<String>(getApplicationContext()
+        adapter = new ArrayAdapter<>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArr);
         listView_MyWorkouts.setAdapter(adapter);
 
@@ -117,7 +107,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
                 sharedPut(data);
 
-                Intent intentItemPress_MW = null;
+                Intent intentItemPress_MW;
                 intentItemPress_MW = new Intent(Activity_MyWorkouts.this, Activity_Workout.class);
 
                 if(intentItemPress_MW != null)
@@ -145,7 +135,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             case R.id.context_menu_upload:
                 return true;
             case R.id.context_menu_delete:
-                //removeItemFromList(info.position);
                 strArr.remove(info.position);
                 adapter.notifyDataSetChanged();
                 return true;
@@ -223,7 +212,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         alertDialogBuilder.setTitle("Add workout name");
         alertDialogBuilder.setView(dialog_add_workout_name);
         final EditText workoutNameInput = (EditText)dialog_add_workout_name.findViewById(R.id.et_dialog_add_workout_name);
-        //flag = checkValidation();
         alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int id){
                 String inputResult = (workoutNameInput.getText().toString());
@@ -238,13 +226,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                } /*else {
-                    Toast.makeText(this, "Form contains error", Toast.LENGTH_LONG)
-                            .show();
-                }*/
-                //strArr.add(inputResult);
-                //defineArrayAdapter();
-
+                }
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int id){
@@ -255,24 +237,12 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         alertDialog.show();
     }
 
-    //check validation
-    /*private boolean checkValidation(String input) {
-        boolean ret = true;
-        EditText textToCheck ;
-        textToCheck.setText(input);
-
-        if (!EditText_Validators.isName(userInput, true)) ret = false;
-        return ret;
-    }*/
-
     // check if user allow to register
     public void checkPostResult(String result) throws JSONException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
             // Save Button in Create New Task page
             defineArrayAdapter();
-            //Intent intentMyWorkouts = new Intent(this, Activity_MyWorkouts.class);
-            //startActivity(intentMyWorkouts);
         } else {
             Toast.makeText(this, "This workout already exist !!!",
                     Toast.LENGTH_LONG).show();
@@ -311,11 +281,11 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     private void checkPostResultWorkoutList(String result) throws JSONException, GeneralSecurityException, IOException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            String[] jsonArr = null;
-            String[] decryptedData = null;
+            String[] jsonArr;
+            String[] decryptedData;
             jsonArr = getJsonArray(json);
             decryptedData = aesDecrypt(jsonArr);
-            strArr = new ArrayList<String>();
+            strArr = new ArrayList<>();
             for (int i = 0 ; i < jsonArr.length ; i++){
 
                 strArr.add(decryptedData[i]);

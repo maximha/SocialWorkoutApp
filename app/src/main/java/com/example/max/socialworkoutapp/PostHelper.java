@@ -4,16 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +19,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -96,7 +92,6 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
-        //checkPostResult(result);//check result answer
     }
 
 
@@ -111,7 +106,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             // 2. make POST request to the given URL
             HttpPost httpPost = new HttpPost(url);
 
-            String json = "";
+            String json;
 
             // 3. build jsonObject
             jsonObject = new JSONObject();
@@ -151,7 +146,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                     setJsonTask();
                     break;
                 case 6:
-                    setJsonLogIn();
+                    setAES_JsonLogIn();
                     break;
                 case 7:
                     setJsonWorkout();
@@ -198,7 +193,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
 
     private String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
-        String line = "";
+        String line;
         String result = "";
         while((line = bufferedReader.readLine()) != null)
             result += line;
@@ -272,6 +267,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         jsonObject.accumulate("userName", logIn.getUserName());
         jsonObject.accumulate("password", logIn.getPassword());
         jsonObject.accumulate("publicKey", logIn.getRsaKey());
+    }
+
+    private void setAES_JsonLogIn() throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, JSONException {
+        jsonObject.accumulate("userName", AES.encrypt(logIn.getUserName(), aesKey));
+        jsonObject.accumulate("password", AES.encrypt(logIn.getPassword(), aesKey));
+        jsonObject.accumulate("publicKey", AES.encrypt(logIn.getRsaKey(), aesKey));
     }
 
     private void setJsonRegistration() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
