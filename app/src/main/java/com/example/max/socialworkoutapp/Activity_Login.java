@@ -1,6 +1,7 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
@@ -38,6 +39,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
     private boolean flag = true;
     private KeyPair pair;
     private String decryptedAesKey ;
+    final Context context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
                     PublicKey publicKey = pair.getPublic(); //get RSA public key
                     String pubKeyBytes = Base64.encodeToString(publicKey.getEncoded(), 0); //encode RSA public key to base 64 string format
 
-                    SHelper = new PostHelper();
+                    SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/login","LogIn", et_User.getText().toString(), et_Password.getText().toString(),pubKeyBytes);
                     try {
                         checkPostResult(showResult());

@@ -2,6 +2,7 @@ package com.example.max.socialworkoutapp;
 
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,12 +23,9 @@ import java.util.concurrent.ExecutionException;
 
 public class Activity_Task extends ActionBarActivity {
 
-    private LinearLayout linearLayout_Task,linearLayout_Task_1 ,linearLayout_Task_2;
-    private LinearLayout linearLayout_Task_1_1 ,linearLayout_Task_2_1 , linearLayout_Task_2_2;
-
     private TextView tv_taskname ,tv_time , tv_rev;
     private TextView row_taskName , row_description , row_taskTime ,row_taskRew;
-
+    final Context context = this;
     private PostHelper SHelper;
 
     @Override
@@ -42,7 +40,7 @@ public class Activity_Task extends ActionBarActivity {
     }
 
     private  void  ShowTask(){
-        SHelper = new PostHelper();
+        SHelper = new PostHelper(context);
         SHelper.execute("http://localhost:36301/api/TaskByName","Task",sharedGet());
         try {
             checkPostResultTask(showResult());
