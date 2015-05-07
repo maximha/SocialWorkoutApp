@@ -27,8 +27,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class Activity_MyWorkouts extends ActionBarActivity{
 
@@ -48,7 +58,27 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
         registerViews();
 
-        ShowWorkoutsList();
+        try {
+            ShowWorkoutsList();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         defineArrayAdapter();
     }
@@ -57,9 +87,11 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         listView_MyWorkouts = (ListView) findViewById(R.id.list_MyWorkouts);
     }
 
-    private  void  ShowWorkoutsList(){
+    private  void  ShowWorkoutsList() throws GeneralSecurityException, IOException {
+        String[] shared = sharedGet();
+        String encryptedUsername = AES.encrypt(shared[0],shared[1]);
         SHelper = new PostHelper();
-        SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName",sharedGet());
+        SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName", encryptedUsername);
         try {
             checkPostResultWorkoutList(showResult());
             ///checkPostResult(showResult());
@@ -196,8 +228,9 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             public void onClick(DialogInterface dialog, int id){
                 String inputResult = (workoutNameInput.getText().toString());
                 if(true) {
+                    String[] shared = sharedGet();
                     SHelper = new PostHelper();
-                    SHelper.execute("http://localhost:36301/api/addworkout","Workout", sharedGet(), inputResult);
+                    SHelper.execute("http://localhost:36301/api/addworkout","Workout", shared[0], inputResult);
                     try {
                         strArr.add(inputResult);
                         checkPostResult(showResult());
@@ -268,21 +301,24 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         editor.commit();
     }
 
-    private String sharedGet()
+    private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        return  editor.getString("userName", null);
+        String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
+        return  sharedData;
     }
 
-    private void checkPostResultWorkoutList(String result) throws JSONException{
+    private void checkPostResultWorkoutList(String result) throws JSONException, GeneralSecurityException, IOException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
             String[] jsonArr = null;
+            String[] decryptedData = null;
             jsonArr = getJsonArray(json);
+            decryptedData = aesDecrypt(jsonArr);
             strArr = new ArrayList<String>();
             for (int i = 0 ; i < jsonArr.length ; i++){
 
-                strArr.add(jsonArr[i]);
+                strArr.add(decryptedData[i]);
             }
         } else {
             Toast.makeText(this, "This workout already exist !!!",
@@ -290,6 +326,16 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             return;
         }
     }
+
+    private String[] aesDecrypt(String[] encryptedText) throws GeneralSecurityException, IOException {
+        String[] shared = sharedGet();
+        for(int i=0;i<encryptedText.length;i++)
+        {
+            encryptedText[i] = AES.decrypt(encryptedText[i],shared[1]);
+        }
+        return  encryptedText;
+    }
+
     private String[] getJsonArray(JSONObject json){
         String[] modelNames = null;
         try {
