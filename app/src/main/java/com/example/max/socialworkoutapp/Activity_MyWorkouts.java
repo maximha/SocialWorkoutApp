@@ -90,7 +90,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     private  void  ShowWorkoutsList() throws GeneralSecurityException, IOException {
         String[] shared = sharedGet();
         String encryptedUsername = AES.encrypt(shared[0],shared[1]);
-        SHelper = new PostHelper();
+        SHelper = new PostHelper(context);
         SHelper.execute("http://localhost:36301/api/ListOfWorkoutsName","ListOfWorkoutsName", encryptedUsername);
         try {
             checkPostResultWorkoutList(showResult());
@@ -229,7 +229,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                 String inputResult = (workoutNameInput.getText().toString());
                 if(true) {
                     String[] shared = sharedGet();
-                    SHelper = new PostHelper();
+                    SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/addworkout","Workout", shared[0], inputResult);
                     try {
                         strArr.add(inputResult);

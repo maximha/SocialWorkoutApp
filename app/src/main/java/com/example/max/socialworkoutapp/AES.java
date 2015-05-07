@@ -18,11 +18,11 @@ import javax.crypto.spec.SecretKeySpec;
 import android.util.Base64;
 
 public class AES {
-    private final String characterEncoding = "UTF-8";
-    private final String cipherTransformation = "AES/CBC/PKCS5Padding";
-    private final String aesEncryptionAlgorithm = "AES";
+    private static final String characterEncoding = "UTF-8";
+    private static final String cipherTransformation = "AES/CBC/PKCS5Padding";
+    private static final String aesEncryptionAlgorithm = "AES";
 
-    public  byte[] decrypt(byte[] cipherText, byte[] key, byte [] initialVector) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException
+    public static byte[] decrypt(byte[] cipherText, byte[] key, byte[] initialVector) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException
     {
         Cipher cipher = Cipher.getInstance(cipherTransformation);
         SecretKeySpec secretKeySpecy = new SecretKeySpec(key, aesEncryptionAlgorithm);
@@ -32,7 +32,7 @@ public class AES {
         return cipherText;
     }
 
-    public byte[] encrypt(byte[] plainText, byte[] key, byte [] initialVector) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException
+    public static byte[] encrypt(byte[] plainText, byte[] key, byte[] initialVector) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException
     {
         Cipher cipher = Cipher.getInstance(cipherTransformation);
         SecretKeySpec secretKeySpec = new SecretKeySpec(key, aesEncryptionAlgorithm);
@@ -42,7 +42,7 @@ public class AES {
         return plainText;
     }
 
-    private byte[] getKeyBytes(String key) throws UnsupportedEncodingException{
+    private static byte[] getKeyBytes(String key) throws UnsupportedEncodingException{
         byte[] keyBytes= new byte[16];
         byte[] parameterKeyBytes= key.getBytes(characterEncoding);
         System.arraycopy(parameterKeyBytes, 0, keyBytes, 0, Math.min(parameterKeyBytes.length, keyBytes.length));
@@ -55,7 +55,7 @@ public class AES {
     /// <param name="plainText">Plain text to encrypt</param>
     /// <param name="key">Secret key</param>
     /// <returns>Base64 encoded string</returns>
-    public String encrypt(String plainText, String key) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
+    public static String encrypt(String plainText, String key) throws UnsupportedEncodingException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException{
         byte[] plainTextbytes = plainText.getBytes(characterEncoding);
         byte[] keyBytes = getKeyBytes(key);
         return Base64.encodeToString(encrypt(plainTextbytes,keyBytes, keyBytes), Base64.DEFAULT);
@@ -67,7 +67,7 @@ public class AES {
     /// <param name="encryptedText">Base64 Encoded String</param>
     /// <param name="key">Secret Key</param>
     /// <returns>Decrypted String</returns>
-    public String decrypt(String encryptedText, String key) throws KeyException, GeneralSecurityException, GeneralSecurityException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, IOException{
+    public static String decrypt(String encryptedText, String key) throws KeyException, GeneralSecurityException, GeneralSecurityException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, IOException{
         byte[] cipheredBytes = Base64.decode(encryptedText, Base64.DEFAULT);
         byte[] keyBytes = getKeyBytes(key);
         return new String(decrypt(cipheredBytes, keyBytes, keyBytes), characterEncoding);
