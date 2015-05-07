@@ -79,7 +79,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+//yggf
         defineArrayAdapter();
     }
 
