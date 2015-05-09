@@ -61,6 +61,10 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 8;
         if(urls[1].equals("RegistrationKey"))
             status = 9;
+        if(urls[1].equals("DeleteWorkout"))
+            status = 10;
+        if(urls[1].equals("DeleteTask"))
+            status = 11;
 
         switch(status){
             case 1:
@@ -76,7 +80,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 setModelWorkout(urls[2], urls[3]);
                 return POST(urls[0],urls[1]);
             case 5:
-                setModelTask(urls[2], urls[3], urls[4], urls[5],urls[6]);
+                setModelTask(urls[2], urls[3], urls[4], urls[5], urls[6]);
                 return POST(urls[0],urls[1]);
             case 6:
                 setUserName(urls[2]);
@@ -89,6 +93,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 return POST(urls[0],urls[1]);
             case 9:
                 setRsaPublicKey(urls[2]);
+                return  POST(urls[0],urls[1]);
+            case 10:
+                setModelWorkout(urls[2], urls[3]);
+                return  POST(urls[0],urls[1]);
+            case 11:
+                setTaskToDelete(urls[2], urls[3]);
                 return  POST(urls[0],urls[1]);
             default:
                 return null;
@@ -142,6 +152,10 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 8;
             if(cs.equals("RegistrationKey"))
                 status = 9;
+            if(cs.equals("DeleteWorkout"))
+                status = 10;
+            if(cs.equals("DeleteTask"))
+                status = 11;
 
             switch(status){
                 case 1:
@@ -170,6 +184,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                     break;
                 case 9:
                     setJsonLogIn();
+                    break;
+                case 10:
+                    setJsonWorkout();
+                    break;
+                case 11:
+                    setJsonTask();
                     break;
                 default:
                     break;
@@ -282,6 +302,16 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         task = new Model_TaskItem();
         task.setWorkoutName("");
         task.setTaskName(urls);
+        task.setDescriptionTask("");
+        task.setTimeTask("");
+        task.setRevTask("");
+    }
+
+    private void setTaskToDelete(String urls , String urls1)
+    {
+        task = new Model_TaskItem();
+        task.setWorkoutName(urls);
+        task.setTaskName(urls1);
         task.setDescriptionTask("");
         task.setTimeTask("");
         task.setRevTask("");

@@ -144,6 +144,9 @@ public class Activity_Workout extends ActionBarActivity  {
     // method to remove list item
     protected void removeItemFromList(int position) {
         final int deletePosition = position;
+        String dataWorkoutNAme = strArr_Tasks.get(position);
+
+        sharedPut(dataWorkoutNAme);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(
                 Activity_Workout.this);
@@ -153,12 +156,20 @@ public class Activity_Workout extends ActionBarActivity  {
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TOD O Auto-generated method stub
+                String[] shared = sharedGet();
+                SHelper = new PostHelper(context);
+                SHelper.execute("http://localhost:36301/api/DeleteTask","DeleteTask", shared[0], sharedGetTaskName());
+                try {
+                    checkPostResultAfterDelete(showResult(), deletePosition);
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
                 // main code on after clicking yes
-                strArr_Tasks.remove(deletePosition);
-                adapter.notifyDataSetChanged();
-                adapter.notifyDataSetInvalidated();
+                //strArr_Tasks.remove(deletePosition);
+                //adapter.notifyDataSetChanged();
+                //adapter.notifyDataSetInvalidated();
 
             }
         });
@@ -217,6 +228,12 @@ public class Activity_Workout extends ActionBarActivity  {
         return  sharedData;
     }
 
+    private String sharedGetTaskName()
+    {
+        SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
+        return  editor.getString("taskName", null);
+    }
+
     // get response from http request
     private String showResult() {
         if (SHelper == null)
@@ -229,6 +246,20 @@ public class Activity_Workout extends ActionBarActivity  {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void checkPostResultAfterDelete(String result , int deletePosition) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            strArr_Tasks.remove(deletePosition);
+            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetInvalidated();
+            defineArrayAdapter();
+        } else {
+            Toast.makeText(this, "This task not exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
     }
 
     private void checkPostResultTaskList(String result) throws JSONException, GeneralSecurityException, IOException {
