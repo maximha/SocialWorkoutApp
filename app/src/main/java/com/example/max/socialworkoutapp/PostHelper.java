@@ -1,6 +1,5 @@
 package com.example.max.socialworkoutapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -30,6 +29,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     private Model_Login logIn;
     private Model_TaskItem task;
     private Model_WorkoutItem workout;
+    private Model_StorageItem addToStorage;
     private JSONObject jsonObject;
     private Context mContext;
     private String aesKey;
@@ -65,6 +65,14 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 10;
         if(urls[1].equals("DeleteTask"))
             status = 11;
+        if(urls[1].equals("AddToStorage"))
+            status = 12;
+        if(urls[1].equals("GetStorageWorkoutsList"))
+            status = 13;
+        if(urls[1].equals("GetStorageTaskList"))
+            status = 14;
+        if(urls[1].equals("StorageTaskProperty"))
+            status = 15;
 
         switch(status){
             case 1:
@@ -98,7 +106,18 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 setModelWorkout(urls[2], urls[3]);
                 return  POST(urls[0],urls[1]);
             case 11:
-                setTaskToDelete(urls[2], urls[3]);
+                setTaskParameters(urls[2], urls[3]);
+                return  POST(urls[0],urls[1]);
+            case 12:
+                setModelAddToStorage(urls[2], urls[3], true);
+                return  POST(urls[0],urls[1]);
+            case 13:
+                return  POST(urls[0],urls[1]);
+            case 14:
+                setModelWorkout(urls[2], urls[3]);
+                return POST(urls[0],urls[1]);
+            case 15:
+                setTaskParameters(urls[2], urls[3]);
                 return  POST(urls[0],urls[1]);
             default:
                 return null;
@@ -156,6 +175,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 10;
             if(cs.equals("DeleteTask"))
                 status = 11;
+            if(cs.equals("AddToStorage"))
+                status = 12;
+            if(cs.equals("GetStorageTaskList"))
+                status = 13;
+            if(cs.equals("StorageTaskProperty"))
+                status = 14;
 
             switch(status){
                 case 1:
@@ -191,6 +216,14 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 case 11:
                     setJsonTask();
                     break;
+                case 12:
+                    setJsonAddToStorage();
+                    break;
+                case 13:
+                    setJsonWorkout();
+                    break;
+                case 14:
+                    setJsonTask();
                 default:
                     break;
             }
@@ -256,6 +289,14 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         logIn.setRsaKey(urls3);
     }
 
+    private void setModelAddToStorage(String urls1, String urls2, boolean urls3)
+    {
+        addToStorage = new Model_StorageItem();
+        addToStorage.setUserName(urls1);
+        addToStorage.setWorkoutName(urls2);
+        addToStorage.setInStorage(urls3);
+    }
+
     private void setModelRegistration(String urls1, String urls2, String urls3, String urls4)
     {
         registration = new Model_Registration();
@@ -307,7 +348,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         task.setRevTask("");
     }
 
-    private void setTaskToDelete(String urls , String urls1)
+    private void setTaskParameters(String urls , String urls1)
     {
         task = new Model_TaskItem();
         task.setWorkoutName(urls);
@@ -338,8 +379,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     }
 
     private void setJsonWorkout() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        jsonObject.accumulate("userName", AES.encrypt(workout.getUserName(),aesKey));
-        jsonObject.accumulate("workoutName", AES.encrypt(workout.getWorkoutName(),aesKey));
+        jsonObject.accumulate("userName", AES.encrypt(workout.getUserName(), aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(workout.getWorkoutName(), aesKey));
     }
 
     private void setJsonTask() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
@@ -348,6 +389,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         jsonObject.accumulate("description", AES.encrypt(task.getDescriptionTask(),aesKey));
         jsonObject.accumulate("time", AES.encrypt(task.getTimeTask(),aesKey));
         jsonObject.accumulate("rev", AES.encrypt(task.getRevTask(),aesKey));
+    }
+
+    private void setJsonAddToStorage() throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, JSONException {
+        jsonObject.accumulate("userName", AES.encrypt(addToStorage.getUserName(), aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(addToStorage.getWorkoutName(), aesKey));
+        jsonObject.accumulate("inStorage", addToStorage.isInStorage());
     }
 
     private String sharedGet()

@@ -134,15 +134,59 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         switch (item.getItemId())
         {
             case R.id.context_menu_upload:
+                uploadItemToStorage(info.position);
                 return true;
             case R.id.context_menu_delete:
-                //strArr.remove(info.position);
-                //adapter.notifyDataSetChanged();
                 removeItemFromList(info.position);
                 return true;
             default:
                 return false;
         }
+    }
+
+    // method to upload item fom list
+    protected void uploadItemToStorage(int position) {
+        //final int uploadPosition = position;
+        String dataWorkoutNAme = strArr.get(position);
+
+        sharedPut(dataWorkoutNAme);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(Activity_MyWorkouts.this);
+
+        alert.setTitle("Upload");
+        alert.setMessage("Do you want upload " + strArr.get(position) + " ?");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String[] shared = sharedGet();
+                SHelper = new PostHelper(context);
+                SHelper.execute("http://localhost:36301/api/AddToStorage","AddToStorage", shared[0], sharedGetWorkoutName());
+                try {
+
+                    checkPostResultAfterUpload(showResult());
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("My Workouts");
+
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+
+        registerForContextMenu(listView_MyWorkouts);
     }
 
     // method to remove item fom list
@@ -163,9 +207,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                 SHelper = new PostHelper(context);
                 SHelper.execute("http://localhost:36301/api/DeleteWorkout","DeleteWorkout", shared[0], sharedGetWorkoutName());
                 try {
-                    //strArr.remove(deletePosition);
-                    //adapter.notifyDataSetChanged();
-                    //adapter.notifyDataSetInvalidated();
                     checkPostResultAfterDelete(showResult(), deletePosition);
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
@@ -247,7 +288,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         alertDialog.show();
     }
 
-    // check if user allow to register
+    // check if workout added to table
     public void checkPostResult(String result , String inputResult) throws JSONException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
@@ -259,6 +300,21 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             return;
         }
     }
+
+    // check if workout upload success
+    public void checkPostResultAfterUpload(String result) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            Toast.makeText(this, "Workout Uploaded !!!",
+                    Toast.LENGTH_LONG).show();
+            defineArrayAdapter();
+        } else {
+            Toast.makeText(this, "This workout is already in storage  !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
     public void checkPostResultAfterDelete(String result , int deletePosition) throws JSONException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){

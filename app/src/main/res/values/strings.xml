@@ -65,4 +65,9 @@
     <string name="hint_dialo_add_workout_name">Enter workout name</string>
 
     <string name="edit_task">Edit Task</string>
+    <string name="title_activity_activity__task__without__action">Activity_Task_Without_Action
+    </string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>
