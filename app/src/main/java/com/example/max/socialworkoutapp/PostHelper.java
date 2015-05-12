@@ -30,6 +30,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     private Model_TaskItem task;
     private Model_WorkoutItem workout;
     private Model_StorageItem addToStorage;
+    private Model_Favorites addToFavorites;
     private JSONObject jsonObject;
     private Context mContext;
     private String aesKey;
@@ -73,6 +74,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 14;
         if(urls[1].equals("StorageTaskProperty"))
             status = 15;
+        if(urls[1].equals("AddWorkoutToFavorites"))
+            status = 16;
+        if(urls[1].equals("GetFavoritesWorkoutsList"))
+            status = 17;
+        if(urls[1].equals("DeleteWorkoutFromFavoritesList"))
+            status = 18;
 
         switch(status){
             case 1:
@@ -118,6 +125,15 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 return POST(urls[0],urls[1]);
             case 15:
                 setTaskParameters(urls[2], urls[3]);
+                return  POST(urls[0],urls[1]);
+            case 16:
+                setModelFavorites(urls[2], urls[3], urls[4]);
+                return  POST(urls[0],urls[1]);
+            case 17:
+                setUserName(urls[2]);
+                return POST(urls[0],urls[1]);
+            case 18:
+                setModelFavorites(urls[2], urls[3], urls[4]);
                 return  POST(urls[0],urls[1]);
             default:
                 return null;
@@ -181,6 +197,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 13;
             if(cs.equals("StorageTaskProperty"))
                 status = 14;
+            if(cs.equals("AddWorkoutToFavorites"))
+                status = 15;
+            if(cs.equals("GetFavoritesWorkoutsList"))
+                status = 16;
+            if(cs.equals("DeleteWorkoutFromFavoritesList"))
+                status = 17;
 
             switch(status){
                 case 1:
@@ -224,6 +246,16 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                     break;
                 case 14:
                     setJsonTask();
+                    break;
+                case 15:
+                    setJsonFavorites();
+                    break;
+                case 16:
+                    setAES_JsonLogIn();
+                    break;
+                case 17:
+                    setJsonFavorites();
+                    break;
                 default:
                     break;
             }
@@ -295,6 +327,14 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         addToStorage.setUserName(urls1);
         addToStorage.setWorkoutName(urls2);
         addToStorage.setInStorage(urls3);
+    }
+
+    private void setModelFavorites(String urls1, String urls2, String urls3)
+    {
+        addToFavorites = new Model_Favorites();
+        addToFavorites.setMasterUserName(urls1);
+        addToFavorites.setUserName(urls2);
+        addToFavorites.setWorkoutName(urls3);
     }
 
     private void setModelRegistration(String urls1, String urls2, String urls3, String urls4)
@@ -395,6 +435,12 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         jsonObject.accumulate("userName", AES.encrypt(addToStorage.getUserName(), aesKey));
         jsonObject.accumulate("workoutName", AES.encrypt(addToStorage.getWorkoutName(), aesKey));
         jsonObject.accumulate("inStorage", addToStorage.isInStorage());
+    }
+
+    private void setJsonFavorites() throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, JSONException {
+        jsonObject.accumulate("masterUserName", AES.encrypt(addToFavorites.getMasterUserName(), aesKey));
+        jsonObject.accumulate("userName", AES.encrypt(addToFavorites.getUserName(), aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(addToFavorites.getWorkoutName(), aesKey));
     }
 
     private String sharedGet()

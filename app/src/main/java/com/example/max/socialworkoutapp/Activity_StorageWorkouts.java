@@ -1,7 +1,9 @@
 package com.example.max.socialworkoutapp;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,7 +29,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.crypto.BadPaddingException;
@@ -36,8 +37,8 @@ import javax.crypto.NoSuchPaddingException;
 
 public class Activity_StorageWorkouts extends ActionBarActivity implements View.OnClickListener {
 
-    private ArrayList<Model_StorageItem> strArrStorage;
-    private ArrayList<String> arr;
+    ArrayList<Model_StorageItem> strArrStorage;
+    private ArrayList<String> arrOfNames;
     private ListView listView_StorageWorkouts;
     private ArrayAdapter<String> adapter;
     final Context context = this;
@@ -95,7 +96,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
     private void defineAdapter()
     {
         adapter = new ArrayAdapter<>(getApplicationContext()
-                , android.R.layout.simple_list_item_1 , arr);
+                , android.R.layout.simple_list_item_1 , arrOfNames);
         listView_StorageWorkouts.setAdapter(adapter);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -111,7 +112,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
                 String dataWorkoutName = (String) parentAdapter.getItemAtPosition(position);
                 String dataUserName = strArrStorage.get(position).getUserName();
 
-                sharedPutParametersStorageWorkout(dataUserName ,dataWorkoutName);
+                sharedPutParametersStorageWorkout(dataUserName, dataWorkoutName);
 
                 Intent intentItemPress_SW = null;
                 intentItemPress_SW = new Intent(Activity_StorageWorkouts.this, Activity_Workout_Without_Action.class);
@@ -127,7 +128,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         MenuInflater inflater = getMenuInflater();
-        menu.setHeaderTitle("Option of item " + info.position);
+        menu.setHeaderTitle("Option of item " + arrOfNames.get(info.position));
         inflater.inflate(R.menu.add_to_favorites_menu, menu);
 
     }
@@ -150,6 +151,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         switch (item.getItemId())
         {
             case R.id.add_to_favorites_menu:
+                addItemToFavoritesList(info.position);
                 return true;
             default:
                 return false;
@@ -162,15 +164,9 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         // int id = item.getItemId();
 
         if(item.getTitle() == "Favorites"){
-            Intent intentAddToFavorites = new Intent(this, Activity_AddToFavorites.class);
+            Intent intentAddToFavorites = new Intent(this, Activity_Favorites.class);
             startActivity(intentAddToFavorites);
         }
-        /*if (item.getTitle() == "Top 10"){
-            Toast.makeText(Activity_StorageWorkouts.this, "TOP 10", Toast.LENGTH_SHORT).show();
-            //Intent intentChangeProf = new Intent(this, ChangeProfile.class);
-            //startActivity(intentChangeProf);
-        }*/
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -199,7 +195,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
                 strArrStorage.add(decryptedData.get(i));
             }
         } else {
-            Toast.makeText(this, "This workout already exist !!!",
+            Toast.makeText(this, "Problem get workouts list !!!",
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -207,18 +203,19 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
     private ArrayList<Model_StorageItem> aesDecrypt(ArrayList encryptedText) throws GeneralSecurityException, IOException, JSONException {
         String[] shared = sharedGet();
 
-        Model_StorageItem model = new Model_StorageItem();
+        //Model_StorageItem model = new Model_StorageItem();
         ArrayList<Model_StorageItem> decryptedText;
         decryptedText = new ArrayList<>();
-        arr = new ArrayList<>();
+        arrOfNames = new ArrayList<>();
         for(int i=0;i<encryptedText.size();i++)
         {
+            Model_StorageItem model = new Model_StorageItem();
             JSONObject jsonObject = (JSONObject)encryptedText.get(i);
             model.setUserName(AES.decrypt(jsonObject.getString("userName"), shared[1]));
             model.setWorkoutName(AES.decrypt(jsonObject.getString("workoutName"), shared[1]));
             model.setInStorage(jsonObject.getBoolean("inStorage"));
-            arr.add(model.getWorkoutName());
-            decryptedText.add(model);
+            arrOfNames.add(model.getWorkoutName());
+            decryptedText.add(i,model);
         }
         return  decryptedText;
     }
@@ -254,7 +251,74 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         editor.commit();
     }
 
+    private String[] sharedGetParametersForStorageWorkout()
+    {
+        SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
+        String[] sharedData = {editor.getString("storageUserName", null) ,editor.getString("storageWorkoutName", null)};
+        return  sharedData;
+    }
 
+    // method to add item to favorites list
+    protected void addItemToFavoritesList(int position) {
+        //final int uploadPosition = position;
+        ArrayList<Model_StorageItem> str = strArrStorage;
+        String dataWorkoutName = arrOfNames.get(position);
+        String dataUserName = strArrStorage.get(position).getUserName();
+
+        sharedPutParametersStorageWorkout(dataUserName,dataWorkoutName);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(Activity_StorageWorkouts.this);
+
+        alert.setTitle("Upload");
+        alert.setMessage("Do you want upload " + arrOfNames.get(position) + " ?");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String[] shared = sharedGet();
+                String[] sharedGetParameter = sharedGetParametersForStorageWorkout();
+                SHelper = new PostHelper(context);
+                SHelper.execute("http://localhost:36301/api/AddWorkoutToFavorites","AddWorkoutToFavorites", shared[0], sharedGetParameter[0],sharedGetParameter[1]);
+                try {
+
+                    checkPostResultAfterAdded(showResult());
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Storage");
+
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+
+        registerForContextMenu(listView_StorageWorkouts);
+    }
+
+    // check if workout upload success
+    public void checkPostResultAfterAdded(String result) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            Toast.makeText(this, "Workout Added !!!",
+                    Toast.LENGTH_LONG).show();
+            defineAdapter();
+        } else {
+            Toast.makeText(this, "This workout is already in favorites  !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
 
     @Override
     public void onClick(View v) {

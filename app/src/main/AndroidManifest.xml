@@ -39,7 +39,7 @@
             android:label="Storage" >
         </activity>
         <activity
-            android:name=".Activity_AddToFavorites"
+            android:name=".Activity_Favorites"
             android:label="Favorites" >
         </activity>
         <activity

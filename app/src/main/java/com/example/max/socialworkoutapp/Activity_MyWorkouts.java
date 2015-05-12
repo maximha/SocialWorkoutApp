@@ -147,9 +147,9 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     // method to upload item fom list
     protected void uploadItemToStorage(int position) {
         //final int uploadPosition = position;
-        String dataWorkoutNAme = strArr.get(position);
+        String dataWorkoutName = strArr.get(position);
 
-        sharedPut(dataWorkoutNAme);
+        sharedPut(dataWorkoutName);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(Activity_MyWorkouts.this);
 
