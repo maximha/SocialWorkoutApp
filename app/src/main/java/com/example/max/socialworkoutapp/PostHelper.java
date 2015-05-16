@@ -80,6 +80,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 17;
         if(urls[1].equals("DeleteWorkoutFromFavoritesList"))
             status = 18;
+        if(urls[1].equals("GetUserProperty"))
+            status = 19;
 
         switch(status){
             case 1:
@@ -135,6 +137,9 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             case 18:
                 setModelFavorites(urls[2], urls[3], urls[4]);
                 return  POST(urls[0],urls[1]);
+            case 19:
+                setUserName(urls[2]);
+                return POST(urls[0],urls[1]);
             default:
                 return null;
         }
@@ -203,6 +208,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 16;
             if(cs.equals("DeleteWorkoutFromFavoritesList"))
                 status = 17;
+            if(cs.equals("GetUserProperty"))
+                status = 18;
 
             switch(status){
                 case 1:
@@ -256,6 +263,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 case 17:
                     setJsonFavorites();
                     break;
+                case 18:
+                    setAES_JsonLogIn();
                 default:
                     break;
             }

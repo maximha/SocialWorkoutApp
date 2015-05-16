@@ -168,11 +168,6 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
                     e.printStackTrace();
                 }
 
-                // main code on after clicking yes
-                //strArr.remove(deletePosition);
-                //adapter.notifyDataSetChanged();
-                //adapter.notifyDataSetInvalidated();
-
             }
         });
         alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
