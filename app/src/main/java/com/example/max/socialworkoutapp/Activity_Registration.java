@@ -28,11 +28,9 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
 
     EditText et_FirstName , et_LastName , et_UserName , et_Pass , et_ConfirmPass;
 
-    private Button btnActRegistration;
     private PostHelper SHelper;
     final Context context = this;
     private KeyPair pair;
-    private String decryptedAesKey ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         et_Pass = (EditText) findViewById(R.id.editText_PassRegistr);
         et_ConfirmPass = (EditText) findViewById(R.id.editText_ConfirmPassRegistr);
 
-        btnActRegistration = (Button) findViewById(R.id.btn_Registration);
+        Button btnActRegistration = (Button) findViewById(R.id.btn_Registration);
         btnActRegistration.setOnClickListener(this);
     }
 
@@ -79,9 +77,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
                     try {
                         try {
                             checkPostResultPreRegistration(showResult());
-                        } catch (GeneralSecurityException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
+                        } catch (GeneralSecurityException | IOException e) {
                             e.printStackTrace();
                         }
                     } catch (JSONException e) {
@@ -105,7 +101,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         if (json.getBoolean("result")) {
             String aesKey;
             aesKey = getJesonArray(json); //get encrypted key from server
-            decryptedAesKey = decryptKey(aesKey); //decrypt aes key with RSA private
+            String decryptedAesKey = decryptKey(aesKey);
             SHelper = new PostHelper(context);
             SHelper.execute("http://localhost:36301/api/registration","Registration", AES.encrypt(et_FirstName.getText().toString(), decryptedAesKey), AES.encrypt(et_LastName.getText().toString(), decryptedAesKey),AES.encrypt(et_UserName.getText().toString(), decryptedAesKey), AES.encrypt(et_Pass.getText().toString(), decryptedAesKey));
             try {
@@ -133,11 +129,8 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
             Intent intentRegistration = new Intent(this, Activity_Login.class);
             startActivity(intentRegistration);
             finish();
-        } else {
-            Toast.makeText(this, "This user already exist !!!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
+        } else Toast.makeText(this, "This user already exist !!!",
+                Toast.LENGTH_LONG).show();
     }
 
     private String getJesonArray(JSONObject json) {
@@ -156,9 +149,7 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -169,29 +160,18 @@ public class Activity_Registration extends ActionBarActivity implements View.OnC
         if (key != null) {
 
             // set key pair to RSA class to encrypt/decrypt
-            RSA rsa = new RSA(pair.getPrivate(), pair.getPublic());
+            RSA rsa = new RSA(pair.getPrivate());
 
             byte[] encr = Base64.decode(key, 0);
             byte[] dec = null;
             try {
                 dec = rsa.decryptRSA(encr);
-            } catch (InvalidKeyException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
+            } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
+            if (dec == null) throw new AssertionError();
             byte[] base64 = Base64.encode(dec, Base64.NO_WRAP);
             decryptedKey = new String(base64);
             return decryptedKey;

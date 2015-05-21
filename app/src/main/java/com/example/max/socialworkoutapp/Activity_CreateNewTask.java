@@ -12,14 +12,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.concurrent.ExecutionException;
 
 public class Activity_CreateNewTask extends ActionBarActivity implements View.OnClickListener{
 
     EditText et_TaskName , et_Description , et_Time , et_Rev;
 
-    private Button btnAct_Task_Save;
     final Context context = this;
     private PostHelper SHelper;
 
@@ -40,7 +38,7 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
         et_Time = (EditText) findViewById(R.id.editText_TaskTime);
         et_Rev = (EditText) findViewById(R.id.editText_TaskRev);
 
-        btnAct_Task_Save = (Button) findViewById(R.id.btn_Save_Task);
+        Button btnAct_Task_Save = (Button) findViewById(R.id.btn_Save_Task);
         btnAct_Task_Save.setOnClickListener(this);
     }
 
@@ -87,7 +85,6 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
         } else {
             Toast.makeText(this, "This task already exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -97,9 +94,7 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;

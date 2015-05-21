@@ -17,30 +17,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-public class Activity_StorageWorkouts extends ActionBarActivity implements View.OnClickListener {
+public class Activity_StorageWorkouts extends ActionBarActivity {
 
     ArrayList<Model_StorageItem> strArrStorage;
     private ArrayList<String> arrOfNames;
     private ListView listView_StorageWorkouts;
-    private ArrayAdapter<String> adapter;
     final Context context = this;
     private PostHelper SHelper;
 
@@ -53,23 +42,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
 
         try {
             ShowStorageWorkoutsList();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
 
@@ -84,7 +57,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
     private  void  ShowStorageWorkoutsList() throws GeneralSecurityException, IOException {
         //String[] shared = sharedGet();
         SHelper = new PostHelper(context);
-        SHelper.execute("http://localhost:36301/api/GetStorageWorkoutsList","GetStorageWorkoutsList");
+        SHelper.execute("http://localhost:36301/api/GetStorageWorkoutsList", "GetStorageWorkoutsList");
         try {
             checkPostResultStorageList(showResult());
         } catch (JSONException e) {
@@ -95,8 +68,8 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
 
     private void defineAdapter()
     {
-        adapter = new ArrayAdapter<>(getApplicationContext()
-                , android.R.layout.simple_list_item_1 , arrOfNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
+                , android.R.layout.simple_list_item_1, arrOfNames);
         listView_StorageWorkouts.setAdapter(adapter);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -114,11 +87,10 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
 
                 sharedPutParametersStorageWorkout(dataUserName, dataWorkoutName);
 
-                Intent intentItemPress_SW = null;
+                Intent intentItemPress_SW;
                 intentItemPress_SW = new Intent(Activity_StorageWorkouts.this, Activity_Workout_Without_Action.class);
 
-                if (intentItemPress_SW != null)
-                    startActivity(intentItemPress_SW);
+                startActivity(intentItemPress_SW);
             }
         });
     }
@@ -176,9 +148,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -197,7 +167,6 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         } else {
             Toast.makeText(this, "Problem get workouts list !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
     private ArrayList<Model_StorageItem> aesDecrypt(ArrayList encryptedText) throws GeneralSecurityException, IOException, JSONException {
@@ -239,8 +208,7 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("userName", null) ,editor.getString("aesKey", null)};
     }
 
     private void sharedPutParametersStorageWorkout(String storageUserName, String storageWorkoutName)
@@ -248,20 +216,18 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("storageUserName", storageUserName);
         editor.putString("storageWorkoutName", storageWorkoutName);
-        editor.commit();
+        editor.apply();
     }
 
     private String[] sharedGetParametersForStorageWorkout()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("storageUserName", null) ,editor.getString("storageWorkoutName", null)};
-        return  sharedData;
+        return new String[]{editor.getString("storageUserName", null) ,editor.getString("storageWorkoutName", null)};
     }
 
     // method to add item to favorites list
     protected void addItemToFavoritesList(int position) {
         //final int uploadPosition = position;
-        ArrayList<Model_StorageItem> str = strArrStorage;
         String dataWorkoutName = arrOfNames.get(position);
         String dataUserName = strArrStorage.get(position).getUserName();
 
@@ -316,22 +282,6 @@ public class Activity_StorageWorkouts extends ActionBarActivity implements View.
         } else {
             Toast.makeText(this, "This workout is already in favorites  !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            /*case R.id.btn_Back_Storage:
-                Log.d(TAG, "Back-Storage Button Pressed");
-                // Back Button in Storage Workouts page
-                Intent intentBack_Storage = new Intent(this, HomeMenu.class);
-                startActivity(intentBack_Storage);
-                break;*/
-            default:
-                break;
-        }
-
     }
 }

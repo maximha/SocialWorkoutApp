@@ -65,7 +65,7 @@ public class AES {
     /// <param name="encryptedText">Base64 Encoded String</param>
     /// <param name="key">Secret Key</param>
     /// <returns>Decrypted String</returns>
-    public static String decrypt(String encryptedText, String key) throws GeneralSecurityException, IllegalBlockSizeException, BadPaddingException, IOException{
+    public static String decrypt(String encryptedText, String key) throws GeneralSecurityException,IOException{
         byte[] cipheredBytes = Base64.decode(encryptedText, Base64.DEFAULT);
         byte[] keyBytes = getKeyBytes(key);
         return new String(decrypt(cipheredBytes, keyBytes, keyBytes), characterEncoding);

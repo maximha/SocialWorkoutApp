@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutionException;
 
 public class Activity_Task extends ActionBarActivity {
 
-    private TextView tv_taskname ,tv_time , tv_rev;
     private TextView row_taskName , row_description , row_taskTime ,row_taskRew;
     final Context context = this;
     private PostHelper SHelper;
@@ -34,9 +33,7 @@ public class Activity_Task extends ActionBarActivity {
         registerViews();
         try {
             ShowTask();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
         defineAdapter();
@@ -57,12 +54,9 @@ public class Activity_Task extends ActionBarActivity {
 
     public void registerViews() {
 
-        tv_taskname = (TextView) findViewById(R.id.tv_row_taskName);
         row_taskName = (TextView) findViewById(R.id.row_taskName);
         row_description = (TextView) findViewById(R.id.row_description);
-        tv_time = (TextView) findViewById(R.id.tv_row_time);
         row_taskTime = (TextView) findViewById(R.id.row_taskTime);
-        tv_rev = (TextView) findViewById(R.id.tv_row_rev);
         row_taskRew = (TextView) findViewById(R.id.row_taskRew);
     }
 
@@ -99,8 +93,7 @@ public class Activity_Task extends ActionBarActivity {
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("taskName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("taskName", null) ,editor.getString("aesKey", null)};
     }
 
     // get response from http request
@@ -109,9 +102,7 @@ public class Activity_Task extends ActionBarActivity {
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -131,7 +122,6 @@ public class Activity_Task extends ActionBarActivity {
         } else {
             Toast.makeText(this, "This task already exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
     private Model_TaskItem getJsonArray(JSONObject json){

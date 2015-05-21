@@ -16,23 +16,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class Activity_Favorites extends ActionBarActivity implements View.OnClickListener {
 
@@ -52,23 +42,7 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
 
         try {
             ShowFavoritesWorkoutsList();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
 
@@ -108,11 +82,10 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
 
                 sharedPutParametersStorageWorkout(dataUserName, dataWorkoutName);
 
-                Intent intentItemPress_SW = null;
+                Intent intentItemPress_SW;
                 intentItemPress_SW = new Intent(Activity_Favorites.this, Activity_Workout_Without_Action.class);
 
-                if (intentItemPress_SW != null)
-                    startActivity(intentItemPress_SW);
+                startActivity(intentItemPress_SW);
             }
         });
     }
@@ -190,8 +163,7 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("userName", null) ,editor.getString("aesKey", null)};
     }
 
     private void sharedPutParametersStorageWorkout(String storageUserName, String storageWorkoutName)
@@ -199,7 +171,7 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("storageUserName", storageUserName);
         editor.putString("storageWorkoutName", storageWorkoutName);
-        editor.commit();
+        editor.apply();
     }
 
     /*private String[] sharedGetParametersForStorageWorkout()
@@ -215,9 +187,7 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -233,7 +203,6 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
         } else {
             Toast.makeText(this, "Deleting Workout failure !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -251,7 +220,6 @@ public class Activity_Favorites extends ActionBarActivity implements View.OnClic
         } else {
             Toast.makeText(this, "Problem get workouts list !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
     private ArrayList<Model_Favorites> aesDecrypt(ArrayList encryptedText) throws GeneralSecurityException, IOException, JSONException {

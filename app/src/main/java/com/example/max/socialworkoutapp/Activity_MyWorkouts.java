@@ -24,16 +24,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class Activity_MyWorkouts extends ActionBarActivity{
 
@@ -53,23 +47,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
         try {
             ShowWorkoutsList();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
 
@@ -111,8 +89,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                 Intent intentItemPress_MW;
                 intentItemPress_MW = new Intent(Activity_MyWorkouts.this, Activity_Workout.class);
 
-                if (intentItemPress_MW != null)
-                    startActivity(intentItemPress_MW);
+                startActivity(intentItemPress_MW);
             }
         });
     }
@@ -266,17 +243,15 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int id){
                 String inputResult = (workoutNameInput.getText().toString());
-                if(true) {
-                    String[] shared = sharedGet();
-                    SHelper = new PostHelper(context);
-                    SHelper.execute("http://localhost:36301/api/addworkout","Workout", shared[0], inputResult);
-                    try {
-                        //strArr.add(inputResult);
-                        checkPostResult(showResult() , inputResult);
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                String[] shared = sharedGet();
+                SHelper = new PostHelper(context);
+                SHelper.execute("http://localhost:36301/api/addworkout","Workout", shared[0], inputResult);
+                try {
+                    //strArr.add(inputResult);
+                    checkPostResult(showResult() , inputResult);
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
             }
         }).setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -297,7 +272,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         } else {
             Toast.makeText(this, "This workout already exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -311,7 +285,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         } else {
             Toast.makeText(this, "This workout is already in storage  !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -325,7 +298,6 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         } else {
             Toast.makeText(this, "This workout not exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -335,9 +307,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -347,14 +317,13 @@ public class Activity_MyWorkouts extends ActionBarActivity{
     {
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("workoutName", workoutName);
-        editor.commit();
+        editor.apply();
     }
 
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("userName", null) ,editor.getString("aesKey", null)};
     }
 
     private String sharedGetWorkoutName()
@@ -371,14 +340,10 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             jsonArr = getJsonArray(json);
             decryptedData = aesDecrypt(jsonArr);
             strArr = new ArrayList<>();
-            for (int i = 0 ; i < jsonArr.length ; i++){
-
-                strArr.add(decryptedData[i]);
-            }
+            strArr.addAll(Arrays.asList(decryptedData).subList(0, jsonArr.length));
         } else {
             Toast.makeText(this, "This workout already exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 

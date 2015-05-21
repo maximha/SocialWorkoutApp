@@ -27,12 +27,8 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
 
     EditText et_User , et_Password;
 
-    private Button btnActLogin;
-    private Button btnActHomeRegistration;
     private PostHelper SHelper;
-    private boolean flag = true;
     private KeyPair pair;
-    private String decryptedAesKey ;
     final Context context = this;
 
     @Override
@@ -54,10 +50,10 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         et_User = (EditText) findViewById(R.id.editText_User);
         et_Password = (EditText) findViewById(R.id.editText_Password);
 
-        btnActLogin = (Button) findViewById(R.id.btn_LogIn);
+        Button btnActLogin = (Button) findViewById(R.id.btn_LogIn);
         btnActLogin.setOnClickListener(this);
 
-        btnActHomeRegistration = (Button) findViewById(R.id.btn_homeRegistration);
+        Button btnActHomeRegistration = (Button) findViewById(R.id.btn_homeRegistration);
         btnActHomeRegistration.setOnClickListener(this);
 
     }
@@ -66,7 +62,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_LogIn :
-                if(/*checkValidation ()*/true)//check if data entered is correct
+                if(checkValidation ())//check if data entered is correct
                 {
                     pair = RSA.generatePair(); //generate RSA private and public keys
                     PublicKey publicKey = pair.getPublic(); //get RSA public key
@@ -77,7 +73,6 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
                     try {
                         checkPostResult(showResult());
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -99,12 +94,8 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         if (json.getBoolean("result")) {
             String aesKey;
             aesKey = getJesonArray(json); //get encrypted key from server
-            decryptedAesKey = decryptKey(aesKey); //decrypt aes key with RSA private
-            if (!flag) {
-                Toast.makeText(this, "Try again !!! "+aesKey, Toast.LENGTH_LONG).show();
-                return;
-            }
-            sharedPut(et_User.getText().toString(),decryptedAesKey); //put user name and aes key to shared memory
+            String decryptedAesKey = decryptKey(aesKey);
+            sharedPut(et_User.getText().toString(), decryptedAesKey); //put user name and aes key to shared memory
             Intent intentLogIn = new Intent(this, Activity_HomeMenu.class);
             startActivity(intentLogIn);
         } else {
@@ -132,9 +123,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -154,7 +143,7 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("userName", userName);
         editor.putString("aesKey", aesKey);
-        editor.commit();
+        editor.apply();
     }
 
     private String decryptKey(String key) {
@@ -162,30 +151,18 @@ public class Activity_Login extends ActionBarActivity implements View.OnClickLis
         if (key != null) {
 
             // set key pair to RSA class to encrypt/decrypt
-            RSA rsa = new RSA(pair.getPrivate(), pair.getPublic());
+            RSA rsa = new RSA(pair.getPrivate());
 
                 byte[] encr = Base64.decode(key, 0);
                 byte[] dec = null;
                 try {
                     dec = rsa.decryptRSA(encr);
-                } catch (InvalidKeyException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    // TODO Auto-generated catch block
+                } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException | NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
 
-                byte[] base64 = Base64.encode(dec, Base64.NO_WRAP);
+            if (dec == null) throw new AssertionError();
+            byte[] base64 = Base64.encode(dec, Base64.NO_WRAP);
                 decryptedKey = new String(base64);
                 return decryptedKey;
         }

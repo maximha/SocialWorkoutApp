@@ -454,8 +454,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
 
     private String sharedGet()
     {
-        SharedPreferences editor;
-        editor = mContext.getSharedPreferences("shared_Memory", mContext.MODE_PRIVATE);
+        SharedPreferences editor = mContext.getSharedPreferences("shared_Memory", Context.MODE_PRIVATE);
         return  editor.getString("aesKey", null);
     }
 }
