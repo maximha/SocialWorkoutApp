@@ -40,6 +40,7 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
             e.printStackTrace();
         }
 
+
         defineAdapter();
     }
 
