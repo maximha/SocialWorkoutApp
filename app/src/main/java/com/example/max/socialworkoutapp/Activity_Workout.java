@@ -21,16 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class Activity_Workout extends ActionBarActivity  {
 
@@ -50,23 +44,7 @@ public class Activity_Workout extends ActionBarActivity  {
 
         try {
             ShowTasksList();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
 
@@ -92,7 +70,7 @@ public class Activity_Workout extends ActionBarActivity  {
 
     private void defineArrayAdapter(){
 
-        adapter = new ArrayAdapter<String>(getApplicationContext()
+        adapter = new ArrayAdapter<>(getApplicationContext()
                 , android.R.layout.simple_list_item_1 , strArr_Tasks);
         listView_Tasks.setAdapter(adapter);
 
@@ -110,8 +88,7 @@ public class Activity_Workout extends ActionBarActivity  {
                 Intent intentItemPress_MW ;
                 intentItemPress_MW = new Intent(Activity_Workout.this, Activity_Task.class);
 
-                if (intentItemPress_MW != null)
-                    startActivity(intentItemPress_MW);
+                startActivity(intentItemPress_MW);
             }
         });
 
@@ -218,14 +195,13 @@ public class Activity_Workout extends ActionBarActivity  {
     {
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("taskName", taskName);
-        editor.commit();
+        editor.apply();
     }
 
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
     }
 
     private String sharedGetTaskName()
@@ -240,9 +216,7 @@ public class Activity_Workout extends ActionBarActivity  {
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -258,7 +232,6 @@ public class Activity_Workout extends ActionBarActivity  {
         } else {
             Toast.makeText(this, "This task not exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -269,14 +242,10 @@ public class Activity_Workout extends ActionBarActivity  {
             jsonArr = getJsonArray(json);
             jsonArr = aesDecrypt(jsonArr);
             strArr_Tasks = new ArrayList<>();
-            for (int i = 0 ; i < jsonArr.length ; i++){
-
-                strArr_Tasks.add(jsonArr[i]);
-            }
+            Collections.addAll(strArr_Tasks, jsonArr);
         } else {
             Toast.makeText(this, "This task already exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
     private String[] getJsonArray(JSONObject json){

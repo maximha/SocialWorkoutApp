@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 public class Activity_HomeMenu extends ActionBarActivity implements View.OnClickListener {
 
     private Button btnActMyWorkouts;
-    private Button btnActStorageWorkouts;
     private TextView tv_FirstName ,tv_LastName ;
     final Context context = this;
     private PostHelper SHelper;
@@ -31,13 +30,13 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_menu_page);
 
+        btnActMyWorkouts = (Button) findViewById(R.id.btn_MyWorkouts);
+
         registerViews();
 
         try {
             ShowUserProperty();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
 
@@ -62,10 +61,9 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
         tv_FirstName = (TextView) findViewById(R.id.label_FirstName);
         tv_LastName = (TextView) findViewById(R.id.label_LastName);
 
-        btnActMyWorkouts = (Button) findViewById(R.id.btn_MyWorkouts);
         btnActMyWorkouts.setOnClickListener(this);
 
-        btnActStorageWorkouts = (Button) findViewById(R.id.btn_Storage);
+        Button btnActStorageWorkouts = (Button) findViewById(R.id.btn_Storage);
         btnActStorageWorkouts.setOnClickListener(this);
     }
 
@@ -127,8 +125,7 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("userName", null) ,editor.getString("aesKey", null)};
     }
 
     // get response from http request
@@ -137,9 +134,7 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -156,7 +151,6 @@ public class Activity_HomeMenu extends ActionBarActivity implements View.OnClick
         } else {
             Toast.makeText(this, "Problem get user property !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 

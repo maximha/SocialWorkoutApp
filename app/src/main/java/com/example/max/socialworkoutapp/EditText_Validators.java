@@ -46,7 +46,7 @@ public class EditText_Validators {
         if (required && !Pattern.matches(regex, text)) {
             editText.setError(errMsg);
             return false;
-        };
+        }
 
         return true;
     }

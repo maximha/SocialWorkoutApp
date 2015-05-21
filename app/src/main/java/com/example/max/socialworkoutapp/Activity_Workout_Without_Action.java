@@ -11,27 +11,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class Activity_Workout_Without_Action extends ActionBarActivity {
 
-    private ArrayAdapter<String> adapter;
     private ArrayList<String> strArr_Tasks;
     private ListView listView_Tasks;
     private PostHelper SHelper;
@@ -46,23 +36,7 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
 
         try {
             ShowTasksList();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
 
@@ -88,8 +62,8 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
 
     private void defineArrayAdapter(){
 
-        adapter = new ArrayAdapter<>(getApplicationContext()
-                , android.R.layout.simple_list_item_1 , strArr_Tasks);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext()
+                , android.R.layout.simple_list_item_1, strArr_Tasks);
         listView_Tasks.setAdapter(adapter);
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
@@ -111,8 +85,7 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
                 Intent intentItemPress_MW;
                 intentItemPress_MW = new Intent(Activity_Workout_Without_Action.this, Activity_Task_Without_Action.class);
 
-                if (intentItemPress_MW != null)
-                    startActivity(intentItemPress_MW);
+                startActivity(intentItemPress_MW);
             }
         });
 
@@ -124,9 +97,7 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -139,14 +110,10 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
             jsonArr = getJsonArray(json);
             jsonArr = aesDecrypt(jsonArr);
             strArr_Tasks = new ArrayList<>();
-            for (int i = 0 ; i < jsonArr.length ; i++){
-
-                strArr_Tasks.add(jsonArr[i]);
-            }
+            Collections.addAll(strArr_Tasks, jsonArr);
         } else {
             Toast.makeText(this, "This task already exist !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
     private String[] getJsonArray(JSONObject json){
@@ -175,21 +142,19 @@ public class Activity_Workout_Without_Action extends ActionBarActivity {
     private String[] sharedGetParametersForStorageWorkout()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("storageUserName", null) ,editor.getString("storageWorkoutName", null)};
-        return  sharedData;
+        return new String[]{editor.getString("storageUserName", null) ,editor.getString("storageWorkoutName", null)};
     }
     private void sharedPutParametersStorageTask(String storageWorkoutName, String storageTaskName)
     {
         SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
         editor.putString("storageWorkoutName", storageWorkoutName);
         editor.putString("storageTaskName", storageTaskName);
-        editor.commit();
+        editor.apply();
     }
 
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
     }
 }

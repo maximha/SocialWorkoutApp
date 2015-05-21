@@ -6,21 +6,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutionException;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -29,10 +25,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
 
     EditText et_FirstName , et_LastName , et_Pass , et_ConfirmPass;
 
-    private Button btnActSave;
     private PostHelper SHelper;
-    private KeyPair pair;
-    private String decryptedAesKey ;
     final Context context = this;
 
     @Override
@@ -54,7 +47,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
         et_Pass = (EditText) findViewById(R.id.editText_Pass_ChangeProf);
         et_ConfirmPass = (EditText) findViewById(R.id.editText_ConfPass_ChangeProf);
 
-        btnActSave = (Button) findViewById(R.id.btn_Save_ChangeProf);
+        Button btnActSave = (Button) findViewById(R.id.btn_Save_ChangeProf);
         btnActSave.setOnClickListener(this);
     }
 
@@ -87,19 +80,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
             SHelper.execute("http://localhost:36301/api/ChangeProfile","ChangeProfile", AES.encrypt(et_FirstName.getText().toString(), aesKey),
                     AES.encrypt(et_LastName.getText().toString(), aesKey), AES.encrypt(sharedGet(), aesKey),
                     AES.encrypt(et_Pass.getText().toString(), aesKey));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
+        } catch (UnsupportedEncodingException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException | BadPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
@@ -113,7 +94,6 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
         } else {
             Toast.makeText(this, "Change Profile failure !!!",
                     Toast.LENGTH_LONG).show();
-            return;
         }
     }
 
@@ -123,9 +103,7 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
             return null;
         try {
             return SHelper.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return null;
@@ -152,7 +130,6 @@ public class Activity_ChangeProfile extends ActionBarActivity implements View.On
     private String[] sharedGetAES()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
-        return  sharedData;
+        return new String[]{editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
     }
 }
