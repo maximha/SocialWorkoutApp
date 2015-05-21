@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Profile"
-        android:textSize="20sp"
+        android:textSize="30sp"
         android:id="@+id/label_Profile"
         android:layout_marginEnd="57dp"
         android:layout_marginTop="31dp"
@@ -29,20 +29,41 @@
         android:layout_height="wrap_content"
         android:text="@string/my_Workouts"
         android:id="@+id/btn_MyWorkouts"
-        android:layout_marginTop="30dp"
+        style="@style/btnStyleGenoa"
         android:layout_below="@+id/image_Prof"
         android:layout_centerHorizontal="true"
-        style="@style/btnStyleGenoa"/>
+        android:layout_marginTop="74dp" />
 
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:text="@string/storage_Workouts"
         android:id="@+id/btn_Storage"
+        android:layout_marginTop="42dp"
+        style="@style/btnStyleGenoa"
         android:layout_below="@+id/btn_MyWorkouts"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        style="@style/btnStyleGenoa"/>
+        android:layout_alignStart="@+id/btn_MyWorkouts" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/firstName"
+        android:id="@+id/label_FirstName"
+        android:layout_below="@+id/label_Profile"
+        android:layout_toEndOf="@+id/image_Prof"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lastName"
+        android:id="@+id/label_LastName"
+        android:layout_below="@+id/label_FirstName"
+        android:layout_alignStart="@+id/label_FirstName"
+        android:layout_marginTop="15dp"
+        android:textSize="18sp"/>
 
 
 </RelativeLayout>

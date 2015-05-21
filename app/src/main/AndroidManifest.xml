@@ -18,55 +18,50 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Activity_HomeMenu"
-            android:label="@string/action_Home">
+            android:label="@string/action_Home" >
         </activity>
-
         <activity
             android:name=".Activity_Registration"
-            android:label="Registration">
+            android:label="Registration" >
         </activity>
-
         <activity
             android:name=".Activity_ChangeProfile"
-            android:label="Change Profile">
-         </activity>
-
+            android:label="Change Profile" >
+        </activity>
         <activity
             android:name=".Activity_MyWorkouts"
-            android:label="My Workouts">
+            android:label="My Workouts" >
         </activity>
-
         <activity
             android:name=".Activity_StorageWorkouts"
-            android:label="Storage">
+            android:label="Storage" >
         </activity>
-
         <activity
-            android:name=".Activity_AddToFavorites"
-            android:label="Favorites">
+            android:name=".Activity_Favorites"
+            android:label="Favorites" >
         </activity>
-
         <activity
             android:name=".Activity_Workout"
-            android:label="Workout">
+            android:label="Workout" >
         </activity>
         <activity
             android:name=".Activity_CreateNewTask"
-            android:label="Create New Task">
+            android:label="Create New Task" >
         </activity>
-
         <activity
             android:name=".Activity_Workout_Without_Action"
-            android:label="Workout">
+            android:label="Workout" >
         </activity>
         <activity
             android:name=".Activity_Task"
-            android:label="Task">
-
-            </activity>
+            android:label="Task" >
+        </activity>
+        <activity
+            android:name=".Activity_Task_Without_Action"
+            android:label="@string/title_activity_activity__task__without__action" >
+        </activity>
     </application>
 
 </manifest>

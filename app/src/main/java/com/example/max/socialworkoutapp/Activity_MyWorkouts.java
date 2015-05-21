@@ -1,5 +1,6 @@
 package com.example.max.socialworkoutapp;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -103,14 +104,14 @@ public class Activity_MyWorkouts extends ActionBarActivity{
             @Override
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
 
-                String data=(String)parentAdapter.getItemAtPosition(position);
+                String data = (String) parentAdapter.getItemAtPosition(position);
 
                 sharedPut(data);
 
                 Intent intentItemPress_MW;
                 intentItemPress_MW = new Intent(Activity_MyWorkouts.this, Activity_Workout.class);
 
-                if(intentItemPress_MW != null)
+                if (intentItemPress_MW != null)
                     startActivity(intentItemPress_MW);
             }
         });
@@ -122,7 +123,7 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         super.onCreateContextMenu(menu, v, menuInfo);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         MenuInflater inflater = getMenuInflater();
-        menu.setHeaderTitle("Option of item "+info.position);
+        menu.setHeaderTitle("Option of item " + strArr.get(info.position));
         inflater.inflate(R.menu.list_item_contex_men, menu);
     }
 
@@ -133,34 +134,40 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         switch (item.getItemId())
         {
             case R.id.context_menu_upload:
+                uploadItemToStorage(info.position);
                 return true;
             case R.id.context_menu_delete:
-                strArr.remove(info.position);
-                adapter.notifyDataSetChanged();
+                removeItemFromList(info.position);
                 return true;
             default:
                 return false;
         }
     }
 
-    // method to remove item fom list
-    /*protected void removeItemFromList(int position) {
-        final int deletePosition = position;
+    // method to upload item fom list
+    protected void uploadItemToStorage(int position) {
+        //final int uploadPosition = position;
+        String dataWorkoutName = strArr.get(position);
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(
-                Activity_MyWorkouts.this);
+        sharedPut(dataWorkoutName);
 
-        alert.setTitle("Delete");
-        alert.setMessage("Do you want delete "+strArr.get(position)+" ?");
+        AlertDialog.Builder alert = new AlertDialog.Builder(Activity_MyWorkouts.this);
+
+        alert.setTitle("Upload");
+        alert.setMessage("Do you want upload " + strArr.get(position) + " ?");
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TOD O Auto-generated method stub
+                String[] shared = sharedGet();
+                SHelper = new PostHelper(context);
+                SHelper.execute("http://localhost:36301/api/AddToStorage","AddToStorage", shared[0], sharedGetWorkoutName());
+                try {
 
-                // main code on after clicking yes
-                strArr.remove(deletePosition);
-                adapter.notifyDataSetChanged();
-                adapter.notifyDataSetInvalidated();
+                    checkPostResultAfterUpload(showResult());
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
 
             }
         });
@@ -174,13 +181,57 @@ public class Activity_MyWorkouts extends ActionBarActivity{
 
         alert.show();
 
-        ActionBar actionBar = getActionBar();
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("My Workouts");
 
-        actionBar.setDisplayOptions( ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE );
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 
         registerForContextMenu(listView_MyWorkouts);
-    }*/
+    }
+
+    // method to remove item fom list
+    protected void removeItemFromList(int position) {
+        final int deletePosition = position;
+        String dataWorkoutNAme = strArr.get(position);
+
+        sharedPut(dataWorkoutNAme);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(Activity_MyWorkouts.this);
+
+        alert.setTitle("Delete");
+        alert.setMessage("Do you want delete " + strArr.get(position) + " ?");
+        alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String[] shared = sharedGet();
+                SHelper = new PostHelper(context);
+                SHelper.execute("http://localhost:36301/api/DeleteWorkout","DeleteWorkout", shared[0], sharedGetWorkoutName());
+                try {
+                    checkPostResultAfterDelete(showResult(), deletePosition);
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // TODO Auto-generated method stub
+                dialog.dismiss();
+            }
+        });
+
+        alert.show();
+
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("My Workouts");
+
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
+
+        registerForContextMenu(listView_MyWorkouts);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -220,8 +271,8 @@ public class Activity_MyWorkouts extends ActionBarActivity{
                     SHelper = new PostHelper(context);
                     SHelper.execute("http://localhost:36301/api/addworkout","Workout", shared[0], inputResult);
                     try {
-                        strArr.add(inputResult);
-                        checkPostResult(showResult());
+                        //strArr.add(inputResult);
+                        checkPostResult(showResult() , inputResult);
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -237,14 +288,42 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         alertDialog.show();
     }
 
-    // check if user allow to register
-    public void checkPostResult(String result) throws JSONException {
+    // check if workout added to table
+    public void checkPostResult(String result , String inputResult) throws JSONException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            // Save Button in Create New Task page
+            strArr.add(inputResult);
             defineArrayAdapter();
         } else {
             Toast.makeText(this, "This workout already exist !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
+    // check if workout upload success
+    public void checkPostResultAfterUpload(String result) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            Toast.makeText(this, "Workout Uploaded !!!",
+                    Toast.LENGTH_LONG).show();
+            defineArrayAdapter();
+        } else {
+            Toast.makeText(this, "This workout is already in storage  !!!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+    }
+
+    public void checkPostResultAfterDelete(String result , int deletePosition) throws JSONException {
+        JSONObject json = new JSONObject(result);
+        if(json.getBoolean("result")){
+            strArr.remove(deletePosition);
+            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetInvalidated();
+            defineArrayAdapter();
+        } else {
+            Toast.makeText(this, "This workout not exist !!!",
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -276,6 +355,12 @@ public class Activity_MyWorkouts extends ActionBarActivity{
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
         String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
         return  sharedData;
+    }
+
+    private String sharedGetWorkoutName()
+    {
+        SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
+        return  editor.getString("workoutName", null);
     }
 
     private void checkPostResultWorkoutList(String result) throws JSONException, GeneralSecurityException, IOException {

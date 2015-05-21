@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,9 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
@@ -28,28 +29,29 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-public class Activity_Workout extends ActionBarActivity  {
+public class Activity_Favorites extends ActionBarActivity implements View.OnClickListener {
 
+    private ArrayList<Model_Favorites> strArrFavorites;
+    private ArrayList<String> arrOfNames;
+    private ListView listView_FavoritesWorkouts;
     private ArrayAdapter<String> adapter;
-    private ArrayList<String> strArr_Tasks;
-
-    private ListView listView_Tasks;
-    private PostHelper SHelper;
     final Context context = this;
+    private PostHelper SHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.workout_page);
+        setContentView(R.layout.add_to_favorites_page);
 
         registerViews();
 
         try {
-            ShowTasksList();
+            ShowFavoritesWorkoutsList();
         } catch (NoSuchPaddingException e) {
             e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
@@ -70,69 +72,66 @@ public class Activity_Workout extends ActionBarActivity  {
             e.printStackTrace();
         }
 
-        defineArrayAdapter();
+        defineAdapter();
     }
 
-    private  void  ShowTasksList() throws GeneralSecurityException, IOException {
+    public void registerViews()
+    {
+        listView_FavoritesWorkouts = (ListView) findViewById(R.id.list_Add_To_Favorites_Workouts);
+    }
+
+    private  void  ShowFavoritesWorkoutsList() throws GeneralSecurityException, IOException {
         String[] shared = sharedGet();
         SHelper = new PostHelper(context);
-        SHelper.execute("http://localhost:36301/api/ListOfTaskName", "ListOfTaskName", shared[0]);
+        SHelper.execute("http://localhost:36301/api/FavoritesList", "GetFavoritesWorkoutsList", shared[0]);
         try {
-            checkPostResultTaskList(showResult());
-
+            checkPostResultFavoritesList(showResult());
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public void registerViews() {
-        listView_Tasks = (ListView) findViewById(R.id.list_tasks_name);
-    }
+    private void defineAdapter()
+    {
+        adapter = new ArrayAdapter<>(getApplicationContext()
+                , android.R.layout.simple_list_item_1, arrOfNames);
+        listView_FavoritesWorkouts.setAdapter(adapter);
 
-    private void defineArrayAdapter(){
+        registerForContextMenu(listView_FavoritesWorkouts);
 
-        adapter = new ArrayAdapter<String>(getApplicationContext()
-                , android.R.layout.simple_list_item_1 , strArr_Tasks);
-        listView_Tasks.setAdapter(adapter);
-
-        registerForContextMenu(listView_Tasks);
-
-        // React to user clicks on item
-        listView_Tasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView_FavoritesWorkouts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parentAdapter, View view, int position, long id) {
+                String dataWorkoutName = (String) parentAdapter.getItemAtPosition(position);
+                String dataUserName = strArrFavorites.get(position).getUserName();
 
-                String data = (String) parentAdapter.getItemAtPosition(position);
+                sharedPutParametersStorageWorkout(dataUserName, dataWorkoutName);
 
-                sharedPut(data);
+                Intent intentItemPress_SW = null;
+                intentItemPress_SW = new Intent(Activity_Favorites.this, Activity_Workout_Without_Action.class);
 
-                Intent intentItemPress_MW ;
-                intentItemPress_MW = new Intent(Activity_Workout.this, Activity_Task.class);
-
-                if (intentItemPress_MW != null)
-                    startActivity(intentItemPress_MW);
+                if (intentItemPress_SW != null)
+                    startActivity(intentItemPress_SW);
             }
         });
-
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         MenuInflater inflater = getMenuInflater();
-        menu.setHeaderTitle("Option of item " + info.position);
+        menu.setHeaderTitle("Option of item " + arrOfNames.get(info.position));
         inflater.inflate(R.menu.delete_menu, menu);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         super.onContextItemSelected(item);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-        switch (item.getItemId())
-        {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
             case R.id.context_menu_delete:
                 removeItemFromList(info.position);
                 return true;
@@ -144,32 +143,30 @@ public class Activity_Workout extends ActionBarActivity  {
     // method to remove list item
     protected void removeItemFromList(int position) {
         final int deletePosition = position;
-        String dataWorkoutNAme = strArr_Tasks.get(position);
-
-        sharedPut(dataWorkoutNAme);
 
         AlertDialog.Builder alert = new AlertDialog.Builder(
-                Activity_Workout.this);
+                Activity_Favorites.this);
 
         alert.setTitle("Delete");
-        alert.setMessage("Do you want delete "+strArr_Tasks.get(position)+" ?");
+        alert.setMessage("Do you want delete "+ arrOfNames.get(position)+" ?");
         alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 String[] shared = sharedGet();
+                String dataUserName = strArrFavorites.get(deletePosition).getUserName();
+                String dataWorkoutName = strArrFavorites.get(deletePosition).getWorkoutName();
+
+                //sharedPutParametersStorageWorkout(dataUserName, dataWorkoutName);
+
                 SHelper = new PostHelper(context);
-                SHelper.execute("http://localhost:36301/api/DeleteTask","DeleteTask", shared[0], sharedGetTaskName());
+                SHelper.execute("http://localhost:36301/api/DeleteWorkoutFromFavoritesList","DeleteWorkoutFromFavoritesList", shared[0], dataUserName, dataWorkoutName);
                 try {
-                    checkPostResultAfterDelete(showResult(), deletePosition);
+                    checkPostResultAfterDelete(showResult(),deletePosition);
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
-                // main code on after clicking yes
-                //strArr_Tasks.remove(deletePosition);
-                //adapter.notifyDataSetChanged();
-                //adapter.notifyDataSetInvalidated();
 
             }
         });
@@ -184,55 +181,33 @@ public class Activity_Workout extends ActionBarActivity  {
         alert.show();
 
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Workout");
 
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_HOME | ActionBar.DISPLAY_SHOW_TITLE);
 
-        registerForContextMenu(listView_Tasks);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_add_task, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        if(id == R.id.btn_add_task){
-            Intent intentPlus_W = new Intent(this, Activity_CreateNewTask.class);
-            startActivity(intentPlus_W);
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void sharedPut(String taskName)
-    {
-        SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
-        editor.putString("taskName", taskName);
-        editor.commit();
+        registerForContextMenu(listView_FavoritesWorkouts);
     }
 
     private String[] sharedGet()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        String[] sharedData = {editor.getString("workoutName", null) ,editor.getString("aesKey", null)};
+        String[] sharedData = {editor.getString("userName", null) ,editor.getString("aesKey", null)};
         return  sharedData;
     }
 
-    private String sharedGetTaskName()
+    private void sharedPutParametersStorageWorkout(String storageUserName, String storageWorkoutName)
+    {
+        SharedPreferences.Editor editor = getSharedPreferences("shared_Memory", MODE_PRIVATE).edit();
+        editor.putString("storageUserName", storageUserName);
+        editor.putString("storageWorkoutName", storageWorkoutName);
+        editor.commit();
+    }
+
+    /*private String[] sharedGetParametersForStorageWorkout()
     {
         SharedPreferences editor = getSharedPreferences("shared_Memory", MODE_PRIVATE);
-        return  editor.getString("taskName", null);
-    }
+        String[] sharedData = {editor.getString("storageUserName", null) ,editor.getString("storageWorkoutName", null)};
+        return  sharedData;
+    }*/
 
     // get response from http request
     private String showResult() {
@@ -251,56 +226,68 @@ public class Activity_Workout extends ActionBarActivity  {
     public void checkPostResultAfterDelete(String result , int deletePosition) throws JSONException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            strArr_Tasks.remove(deletePosition);
+            arrOfNames.remove(deletePosition);
             adapter.notifyDataSetChanged();
             adapter.notifyDataSetInvalidated();
-            defineArrayAdapter();
+            defineAdapter();
         } else {
-            Toast.makeText(this, "This task not exist !!!",
+            Toast.makeText(this, "Deleting Workout failure !!!",
                     Toast.LENGTH_LONG).show();
             return;
         }
     }
 
-    private void checkPostResultTaskList(String result) throws JSONException, GeneralSecurityException, IOException {
+    private void checkPostResultFavoritesList(String result) throws JSONException, GeneralSecurityException, IOException {
         JSONObject json = new JSONObject(result);
         if(json.getBoolean("result")){
-            String[] jsonArr ;
+            ArrayList<JSONObject> jsonArr;
+            ArrayList<Model_Favorites> decryptedData;
             jsonArr = getJsonArray(json);
-            jsonArr = aesDecrypt(jsonArr);
-            strArr_Tasks = new ArrayList<>();
-            for (int i = 0 ; i < jsonArr.length ; i++){
-
-                strArr_Tasks.add(jsonArr[i]);
+            decryptedData = aesDecrypt(jsonArr);
+            strArrFavorites = new ArrayList<>();
+            for (int i = 0 ; i < jsonArr.size() ; i++){
+                strArrFavorites.add(decryptedData.get(i));
             }
         } else {
-            Toast.makeText(this, "This task already exist !!!",
+            Toast.makeText(this, "Problem get workouts list !!!",
                     Toast.LENGTH_LONG).show();
             return;
         }
     }
-    private String[] getJsonArray(JSONObject json){
-        String[] modelNames = null;
+    private ArrayList<Model_Favorites> aesDecrypt(ArrayList encryptedText) throws GeneralSecurityException, IOException, JSONException {
+        String[] shared = sharedGet();
+
+        ArrayList<Model_Favorites> decryptedText;
+        decryptedText = new ArrayList<>();
+        arrOfNames = new ArrayList<>();
+        for(int i=0;i<encryptedText.size();i++)
+        {
+            Model_Favorites model = new Model_Favorites();
+            JSONObject jsonObject = (JSONObject)encryptedText.get(i);
+            model.setMasterUserName(AES.decrypt(jsonObject.getString("masterUser"), shared[1]));
+            model.setUserName(AES.decrypt(jsonObject.getString("userName"), shared[1]));
+            model.setWorkoutName(AES.decrypt(jsonObject.getString("workoutName"), shared[1]));
+            arrOfNames.add(model.getWorkoutName());
+            decryptedText.add(model);
+        }
+        return  decryptedText;
+    }
+
+    private ArrayList<JSONObject> getJsonArray(JSONObject json){
+        ArrayList<JSONObject> modelWorkouts;
+        modelWorkouts = null;
         try {
-            JSONArray tasks = json.getJSONArray("tasksList");
-            modelNames = new String[tasks.length()];
-            for (int i = 0; i< tasks.length() ; i++ ){
-                modelNames[i] = tasks.getString(i);
+            JSONArray workouts = json.getJSONArray("favoritesWorkouts");
+            modelWorkouts = new ArrayList<>();
+            for (int i = 0; i< workouts.length() ; i++ )
+            {
+                modelWorkouts.add(workouts.getJSONObject(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return modelNames;
+        return modelWorkouts;
     }
-
-    private String[] aesDecrypt(String[] encryptedText) throws GeneralSecurityException, IOException {
-        String[] shared = sharedGet();
-        for(int i=0;i<encryptedText.length;i++)
-        {
-            encryptedText[i] = AES.decrypt(encryptedText[i],shared[1]);
-        }
-        return  encryptedText;
+    public void onClick(View v) {
     }
-
-
 }

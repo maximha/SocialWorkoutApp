@@ -109,7 +109,7 @@ public class Activity_CreateNewTask extends ActionBarActivity implements View.On
     private boolean checkValidation() {
         boolean ret = true;
 
-        if (!EditText_Validators.isName(et_TaskName, true)) ret = false;
+        if (!EditText_Validators.hasText(et_TaskName)) ret = false;
         if (!EditText_Validators.hasText(et_Description)) ret = false;
         if (!EditText_Validators.hasText(et_Time)) ret = false;
         if (!EditText_Validators.hasText(et_Rev)) ret = false;

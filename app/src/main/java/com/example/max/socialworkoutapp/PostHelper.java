@@ -1,6 +1,5 @@
 package com.example.max.socialworkoutapp;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -30,6 +29,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     private Model_Login logIn;
     private Model_TaskItem task;
     private Model_WorkoutItem workout;
+    private Model_StorageItem addToStorage;
+    private Model_Favorites addToFavorites;
     private JSONObject jsonObject;
     private Context mContext;
     private String aesKey;
@@ -61,6 +62,26 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             status = 8;
         if(urls[1].equals("RegistrationKey"))
             status = 9;
+        if(urls[1].equals("DeleteWorkout"))
+            status = 10;
+        if(urls[1].equals("DeleteTask"))
+            status = 11;
+        if(urls[1].equals("AddToStorage"))
+            status = 12;
+        if(urls[1].equals("GetStorageWorkoutsList"))
+            status = 13;
+        if(urls[1].equals("GetStorageTaskList"))
+            status = 14;
+        if(urls[1].equals("StorageTaskProperty"))
+            status = 15;
+        if(urls[1].equals("AddWorkoutToFavorites"))
+            status = 16;
+        if(urls[1].equals("GetFavoritesWorkoutsList"))
+            status = 17;
+        if(urls[1].equals("DeleteWorkoutFromFavoritesList"))
+            status = 18;
+        if(urls[1].equals("GetUserProperty"))
+            status = 19;
 
         switch(status){
             case 1:
@@ -76,7 +97,7 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 setModelWorkout(urls[2], urls[3]);
                 return POST(urls[0],urls[1]);
             case 5:
-                setModelTask(urls[2], urls[3], urls[4], urls[5],urls[6]);
+                setModelTask(urls[2], urls[3], urls[4], urls[5], urls[6]);
                 return POST(urls[0],urls[1]);
             case 6:
                 setUserName(urls[2]);
@@ -90,6 +111,35 @@ public class PostHelper extends AsyncTask<String, Void, String> {
             case 9:
                 setRsaPublicKey(urls[2]);
                 return  POST(urls[0],urls[1]);
+            case 10:
+                setModelWorkout(urls[2], urls[3]);
+                return  POST(urls[0],urls[1]);
+            case 11:
+                setTaskParameters(urls[2], urls[3]);
+                return  POST(urls[0],urls[1]);
+            case 12:
+                setModelAddToStorage(urls[2], urls[3], true);
+                return  POST(urls[0],urls[1]);
+            case 13:
+                return  POST(urls[0],urls[1]);
+            case 14:
+                setModelWorkout(urls[2], urls[3]);
+                return POST(urls[0],urls[1]);
+            case 15:
+                setTaskParameters(urls[2], urls[3]);
+                return  POST(urls[0],urls[1]);
+            case 16:
+                setModelFavorites(urls[2], urls[3], urls[4]);
+                return  POST(urls[0],urls[1]);
+            case 17:
+                setUserName(urls[2]);
+                return POST(urls[0],urls[1]);
+            case 18:
+                setModelFavorites(urls[2], urls[3], urls[4]);
+                return  POST(urls[0],urls[1]);
+            case 19:
+                setUserName(urls[2]);
+                return POST(urls[0],urls[1]);
             default:
                 return null;
         }
@@ -142,6 +192,24 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 status = 8;
             if(cs.equals("RegistrationKey"))
                 status = 9;
+            if(cs.equals("DeleteWorkout"))
+                status = 10;
+            if(cs.equals("DeleteTask"))
+                status = 11;
+            if(cs.equals("AddToStorage"))
+                status = 12;
+            if(cs.equals("GetStorageTaskList"))
+                status = 13;
+            if(cs.equals("StorageTaskProperty"))
+                status = 14;
+            if(cs.equals("AddWorkoutToFavorites"))
+                status = 15;
+            if(cs.equals("GetFavoritesWorkoutsList"))
+                status = 16;
+            if(cs.equals("DeleteWorkoutFromFavoritesList"))
+                status = 17;
+            if(cs.equals("GetUserProperty"))
+                status = 18;
 
             switch(status){
                 case 1:
@@ -171,6 +239,32 @@ public class PostHelper extends AsyncTask<String, Void, String> {
                 case 9:
                     setJsonLogIn();
                     break;
+                case 10:
+                    setJsonWorkout();
+                    break;
+                case 11:
+                    setJsonTask();
+                    break;
+                case 12:
+                    setJsonAddToStorage();
+                    break;
+                case 13:
+                    setJsonWorkout();
+                    break;
+                case 14:
+                    setJsonTask();
+                    break;
+                case 15:
+                    setJsonFavorites();
+                    break;
+                case 16:
+                    setAES_JsonLogIn();
+                    break;
+                case 17:
+                    setJsonFavorites();
+                    break;
+                case 18:
+                    setAES_JsonLogIn();
                 default:
                     break;
             }
@@ -236,6 +330,22 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         logIn.setRsaKey(urls3);
     }
 
+    private void setModelAddToStorage(String urls1, String urls2, boolean urls3)
+    {
+        addToStorage = new Model_StorageItem();
+        addToStorage.setUserName(urls1);
+        addToStorage.setWorkoutName(urls2);
+        addToStorage.setInStorage(urls3);
+    }
+
+    private void setModelFavorites(String urls1, String urls2, String urls3)
+    {
+        addToFavorites = new Model_Favorites();
+        addToFavorites.setMasterUserName(urls1);
+        addToFavorites.setUserName(urls2);
+        addToFavorites.setWorkoutName(urls3);
+    }
+
     private void setModelRegistration(String urls1, String urls2, String urls3, String urls4)
     {
         registration = new Model_Registration();
@@ -287,6 +397,16 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         task.setRevTask("");
     }
 
+    private void setTaskParameters(String urls , String urls1)
+    {
+        task = new Model_TaskItem();
+        task.setWorkoutName(urls);
+        task.setTaskName(urls1);
+        task.setDescriptionTask("");
+        task.setTimeTask("");
+        task.setRevTask("");
+    }
+
     private void setJsonLogIn() throws JSONException
     {
         jsonObject.accumulate("userName", logIn.getUserName());
@@ -308,8 +428,8 @@ public class PostHelper extends AsyncTask<String, Void, String> {
     }
 
     private void setJsonWorkout() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        jsonObject.accumulate("userName", AES.encrypt(workout.getUserName(),aesKey));
-        jsonObject.accumulate("workoutName", AES.encrypt(workout.getWorkoutName(),aesKey));
+        jsonObject.accumulate("userName", AES.encrypt(workout.getUserName(), aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(workout.getWorkoutName(), aesKey));
     }
 
     private void setJsonTask() throws JSONException, NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
@@ -318,6 +438,18 @@ public class PostHelper extends AsyncTask<String, Void, String> {
         jsonObject.accumulate("description", AES.encrypt(task.getDescriptionTask(),aesKey));
         jsonObject.accumulate("time", AES.encrypt(task.getTimeTask(),aesKey));
         jsonObject.accumulate("rev", AES.encrypt(task.getRevTask(),aesKey));
+    }
+
+    private void setJsonAddToStorage() throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, JSONException {
+        jsonObject.accumulate("userName", AES.encrypt(addToStorage.getUserName(), aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(addToStorage.getWorkoutName(), aesKey));
+        jsonObject.accumulate("inStorage", addToStorage.isInStorage());
+    }
+
+    private void setJsonFavorites() throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, JSONException {
+        jsonObject.accumulate("masterUserName", AES.encrypt(addToFavorites.getMasterUserName(), aesKey));
+        jsonObject.accumulate("userName", AES.encrypt(addToFavorites.getUserName(), aesKey));
+        jsonObject.accumulate("workoutName", AES.encrypt(addToFavorites.getWorkoutName(), aesKey));
     }
 
     private String sharedGet()
