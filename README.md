@@ -1,2 +1,6 @@
 # SocialWorkoutApp
-My first app project
+This is Final Project. Android Application
+
+# Installation
+
+# DB
